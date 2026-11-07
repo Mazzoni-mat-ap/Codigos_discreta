@@ -8,7 +8,6 @@ from algoritmos.rotas import (
 from visualizacao.graficos import visualizar_grafo
 
 
-# Matriz de teste
 matriz = [[0 for _ in range(25)] for _ in range(25)]
 
 for i in range(5):
@@ -44,7 +43,6 @@ criticas = salas_criticas_rota(G, entrada, saida)
 print("Salas crìticas para a fuga:", criticas)
 
 
-# Simulação: bloqueio da sala 2
 novo_caminho, nova_distancia = simular_bloqueio_sala(
     G, 2, entrada, saida
 )
