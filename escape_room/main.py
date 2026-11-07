@@ -9,19 +9,28 @@ from visualizacao.graficos import visualizar_grafo
 
 
 # Matriz de teste
-matriz = [
-    [0, 1, 0, 0, 0, 0],
-    [1, 0, 1, 0, 0, 1],
-    [0, 1, 0, 1, 0, 0],
-    [0, 0, 1, 0, 1, 1],
-    [0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 1, 0, 0]
-]
+matriz = [[0 for _ in range(25)] for _ in range(25)]
+
+for i in range(5):
+    for j in range(4):
+        atual = i * 5 + j
+        direita = atual + 1
+
+        matriz[atual][direita] = 1
+        matriz[direita][atual] = 1
+
+for i in range(4):
+    for j in range(5):
+        atual = i * 5 + j
+        abaixo = atual + 5
+
+        matriz[atual][abaixo] = 1
+        matriz[abaixo][atual] = 1
 
 G = criar_grafo(matriz)
 
 entrada = 1
-saida = 5
+saida = 25
 
 caminho, distancia = menor_caminho(G, entrada, saida)
 
@@ -30,10 +39,10 @@ print("Distância:", distancia)
 
 print("Pontos de articulação:", pontos_articulacao(G))
 
-print(
-    "Salas críticas para a fuga:",
-    salas_criticas_rota(G, entrada, saida)
-)
+criticas = salas_criticas_rota(G, entrada, saida)
+
+print("Salas crìticas para a fuga:", criticas)
+
 
 # Simulação: bloqueio da sala 2
 novo_caminho, nova_distancia = simular_bloqueio_sala(
@@ -44,4 +53,4 @@ print("\nApós bloquear a sala 2:")
 print("Novo caminho:", novo_caminho)
 print("Nova distância:", nova_distancia)
 
-visualizar_grafo(G)
+visualizar_grafo(G, entrada, saida, criticas, caminho)
