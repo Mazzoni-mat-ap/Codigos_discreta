@@ -16,12 +16,10 @@ def criar_grafo(matriz):
     if n > 25:
         raise ValueError("O limite do projeto é de 25 salas.")
 
-    # Verifica se a matriz é quadrada
     for linha in matriz:
         if len(linha) != n:
             raise ValueError("A matriz precisa ser quadrada.")
 
-    # Verifica se a matriz representa um grafo simples
     for i in range(n):
         for j in range(n):
 
@@ -34,13 +32,10 @@ def criar_grafo(matriz):
             if i == j and matriz[i][j] != 0:
                 raise ValueError("Não são permitidos laços.")
 
-    # Criação do grafo
     G = nx.Graph()
 
-    # Adiciona as salas
     G.add_nodes_from(range(1, n + 1))
 
-    # Adiciona as portas
     for i in range(n):
         for j in range(i + 1, n):
             if matriz[i][j] == 1:
