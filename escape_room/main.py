@@ -28,27 +28,40 @@ for i in range(4):
 
 G = criar_grafo(matriz)
 
-entrada = 1
-saida = 25
+origem = 13
+saidas = [1, 5, 21, 25]
 
-caminho, distancia = menor_caminho(G, entrada, saida)
-
-print("Menor caminho:", caminho)
-print("Distância:", distancia)
+for saida in saidas:
+    caminho, distancia = menor_caminho(G, origem, saida)
+    print(f"\nSaída: {saida}")
+    print("Menor caminho:", caminho)
+    print("Distância:", distancia)
 
 print("Pontos de articulação:", pontos_articulacao(G))
 
-criticas = salas_criticas_rota(G, entrada, saida)
+criticas = salas_criticas_rota(G, origem, saida)
 
 print("Salas crìticas para a fuga:", criticas)
 
 
 novo_caminho, nova_distancia = simular_bloqueio_sala(
-    G, 2, entrada, saida
+    G, 2, origem, saida
 )
 
 print("\nApós bloquear a sala 2:")
 print("Novo caminho:", novo_caminho)
 print("Nova distância:", nova_distancia)
 
-visualizar_grafo(G, entrada, saida, criticas, caminho)
+visualizar_grafo(G, origem, saida, criticas, caminho)
+
+G_alagado = G.copy()
+G_alagado.remove_edge(13, 14)
+G_alagado.remove_edge(19, 20)
+
+print("\nCenário: Rua alagada")
+
+for saida in saidas:
+    caminho, distancia = menor_caminho(G_alagado, origem, saida)
+    print(f"Saída: {saida}")
+    print("Menor caminho:", caminho)
+    print("Distância:", distancia)
