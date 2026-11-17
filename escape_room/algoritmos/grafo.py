@@ -1,6 +1,6 @@
 ﻿import numpy as np
 import networkx as nx
-
+from escape_room.algoritmos.matriz_de_adjacencia import matriz_pesos
 
 def criar_grafo(matriz):
     """

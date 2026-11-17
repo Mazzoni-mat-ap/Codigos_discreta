@@ -1,87 +1,96 @@
-# Escape Room: análise de rotas e riscos com Teoria dos Grafos
+# Escape Room: anÃ¡lise de rotas e riscos com Teoria dos Grafos
 
-Projeto acadêmico de Teoria dos Grafos desenvolvido em Python. A proposta é representar ambientes como grafos e estudar caminhos entre uma entrada e uma saída, pontos de articulação e efeitos do bloqueio de salas ou passagens.
+Projeto acadÃªmico de Teoria dos Grafos desenvolvido em Python. A proposta Ã© representar ambientes como grafos e estudar caminhos entre uma entrada e uma saÃ­da, pontos de articulaÃ§Ã£o e efeitos do bloqueio de salas ou passagens.
 
-> **Escopo:** protótipo didático. Os resultados não substituem projetos, normas ou sistemas profissionais de evacuação e segurança.
+> **Escopo:** protÃ³tipo didÃ¡tico. Os resultados nÃ£o substituem projetos, normas ou sistemas profissionais de evacuaÃ§Ã£o e seguranÃ§a.
 
 ## Objetivos
 
-- Representar salas como vértices e portas/passagens como arestas.
-- Construir um grafo a partir de uma matriz de adjacência.
-- Encontrar um menor caminho entre entrada e saída.
-- Identificar pontos de articulação e salas cuja remoção desconecta entrada e saída.
-- Simular bloqueios e comparar cenários.
-- Visualizar os grafos e os resultados.
+- Representar salas como vÃ©rtices e portas/passagens como arestas.
+- Construir um grafo ponderado a partir de uma matriz de adjacÃªncia.
+- Encontrar caminhos de menor custo entre entrada e saÃ­da.
+- Identificar pontos de articulaÃ§Ã£o e salas cuja remoÃ§Ã£o desconecta entrada e saÃ­da.
+- Simular bloqueios de salas e passagens.
+- Comparar cenÃ¡rios de risco, como alagamentos e interdiÃ§Ãµes.
+- Visualizar os grafos, os pesos das arestas e os caminhos encontrados.
 
-O modelo atual considera grafos simples e não direcionados, com limite de até 25 salas. A matriz de adjacência deve ser quadrada, simétrica e ter apenas 0 e 1.
+## Modelo matemÃ¡tico
+
+O modelo utiliza grafos simples, ponderados e nÃ£o direcionados, com limite de atÃ© 25 salas.
+
+- Cada vÃ©rtice representa uma sala.
+- Cada aresta representa uma passagem entre duas salas.
+- O peso da aresta representa o custo de percorrer aquela passagem.
+- Como o grafo Ã© nÃ£o direcionado, as passagens podem ser percorridas nos dois sentidos.
+
+A matriz de adjacÃªncia ponderada deve ser quadrada e simÃ©trica.
+
+- Valores positivos representam o custo de uma passagem.
+- Zero na diagonal representa ausÃªncia de laÃ§os.
+- Infinito (`inf`) representa ausÃªncia de conexÃ£o entre duas salas.
+- Pesos negativos nÃ£o sÃ£o permitidos.
+
+## Algoritmos e funcionalidades
+
+- **Menor caminho:** utiliza o algoritmo de caminho mÃ­nimo ponderado do NetworkX.
+- **Pontos de articulaÃ§Ã£o:** identifica vÃ©rtices cuja remoÃ§Ã£o aumenta o nÃºmero de componentes conexos.
+- **Salas crÃ­ticas:** identifica salas cuja remoÃ§Ã£o desconecta especificamente a entrada da saÃ­da.
+- **Bloqueios:** simula a remoÃ§Ã£o de salas e passagens.
+- **VisualizaÃ§Ã£o:** destaca entrada, saÃ­da, salas crÃ­ticas, caminhos e pesos das arestas.
 
 ## Tecnologias
 
-- Python 3.14 (ou versão compatível)
-- [NetworkX](https://networkx.org/) para representação e análise de grafos
-- [Matplotlib](https://matplotlib.org/) para visualização
+- Python 3.14 (ou versÃ£o compatÃ­vel)
+- [NetworkX](https://networkx.org/) para representaÃ§Ã£o e anÃ¡lise de grafos.
+- [NumPy](https://numpy.org/) para manipulaÃ§Ã£o de matrizes.
+- [Matplotlib](https://matplotlib.org/) para visualizaÃ§Ã£o.
 
 ## Estrutura do projeto
 
 ```text
 Codigos_discreta/
-├── README.md
-├── requirements.txt
-├── .gitignore
-└── escape_room/
-    ├── main.py
-    ├── algoritmos/
-    │   ├── grafo.py
-    │   └── rotas.py
-    ├── simulacao/
-    │   └── cenarios.py
-    └── visualizacao/
-        └── graficos.py
+â”œâ”€â”€ README.md
+â”œâ”€â”€ requirements.txt
+â”œâ”€â”€ .gitignore
+â””â”€â”€ escape_room/
+    â”œâ”€â”€ main.py
+    â”œâ”€â”€ algoritmos/
+    â”‚   â”œâ”€â”€ grafo.py
+    â”‚   â”œâ”€â”€ matriz_de_adjacencia.py
+    â”‚   â””â”€â”€ rotas.py
+    â””â”€â”€ visualizacao/
+        â””â”€â”€ graficos.py
 ```
 
 ## Como executar
 
-1. Clone o repositório e entre na pasta:
+1. Clone o repositÃ³rio e entre na pasta:
 
    ```bash
    git clone https://github.com/Mazzoni-mat-ap/Codigos_discreta.git
    cd Codigos_discreta
    ```
 
-2. (Recomendado) Crie e ative um ambiente virtual:
-
-   **Windows PowerShell**
-
-   ```powershell
-   py -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-   ```
-
-3. Instale as dependências:
+2. Instale as dependÃªncias:
 
    ```bash
    py -m pip install -r requirements.txt
    ```
 
-4. Execute o programa a partir da pasta `escape_room`:
+3. Execute o projeto:
 
-   ```powershell
-   cd escape_room
-   py main.py
+   ```bash
+   py -m escape_room.main
    ```
 
-## Organização do código
+## AplicaÃ§Ãµes
 
-- `algoritmos/grafo.py`: valida a matriz de adjacência e constrói o grafo.
-- `algoritmos/rotas.py`: reúne as funções de caminhos, pontos de articulação e bloqueio de salas.
-- `visualizacao/graficos.py`: funções de representação visual.
-- `simulacao/cenarios.py`: espaço destinado à implementação dos cenários de risco.
-- `main.py`: ponto de entrada e execução dos testes atuais.
+O projeto demonstra como a Teoria dos Grafos pode auxiliar na anÃ¡lise de rotas e na identificaÃ§Ã£o de pontos crÃ­ticos em ambientes sujeitos a situaÃ§Ãµes de risco.
 
-## Estado atual
+Entre as aplicaÃ§Ãµes simuladas estÃ£o:
 
-A versão publicada contém uma matriz pequena de teste para validar a construção do grafo, a busca de menor caminho, a identificação de pontos de articulação e a simulação de bloqueio de uma sala. A visualização e a camada de cenários ainda estão em desenvolvimento. O mapa definitivo de até 25 salas será integrado posteriormente.
-
-## Colaboração
-
-O projeto é desenvolvido em equipe. Para novas funcionalidades, prefira criar uma branch, testar as alterações e abrir um Pull Request para revisão antes de integrar à `main`.
+- EvacuaÃ§Ã£o de ambientes.
+- Bloqueio de salas e passagens.
+- InterdiÃ§Ã£o de rotas por alagamentos.
+- IdentificaÃ§Ã£o de gargalos e pontos de articulaÃ§Ã£o.
+- ComparaÃ§Ã£o de rotas alternativas considerando seus custos.

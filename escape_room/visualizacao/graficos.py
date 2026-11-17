@@ -1,11 +1,15 @@
-﻿import matplotlib.pyplot as plt
+﻿
+import matplotlib.pyplot as plt
 import networkx as nx
+
+from escape_room.algoritmos.grafo import criar_grafo
+from escape_room.algoritmos.matriz_de_adjacencia import matriz_pesos
 
 
 def visualizar_grafo(G, entrada, saida, criticas, caminho):
     """
-    Visualiza o grafo, destacando entrada, saída, salas críticas
-    e o caminho escolhido.
+    Visualiza o grafo usando Matplotlib.
+    Cada nó representa uma sala e cada aresta representa uma porta.
     """
 
     plt.figure(figsize=(12, 8))
@@ -43,9 +47,10 @@ def visualizar_grafo(G, entrada, saida, criticas, caminho):
         node_color=cores,
         edge_color=cores_arestas,
         node_size=500,
-        font_size=12
+        font_size=16
     )
 
+    # Exibe os pesos das arestas no grafo.
     pesos = nx.get_edge_attributes(G, "weight")
 
     nx.draw_networkx_edge_labels(
@@ -58,9 +63,8 @@ def visualizar_grafo(G, entrada, saida, criticas, caminho):
 
 
 if __name__ == "__main__":
-    from escape_room.algoritmos.grafo import criar_grafo
-    from escape_room.algoritmos.matriz_de_adjacencia import matriz_pesos
 
+    # Cria o grafo usando a matriz de pesos.
     G = criar_grafo(matriz_pesos)
 
     print("Vértices:", G.number_of_nodes())
