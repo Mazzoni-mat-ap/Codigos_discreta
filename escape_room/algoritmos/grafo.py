@@ -1,12 +1,12 @@
-import numpy as np
+﻿import numpy as np
 import networkx as nx
 from escape_room.algoritmos.matriz_de_adjacencia import matriz_pesos
 
 def criar_grafo(matriz):
     """
-    Recebe uma matriz de adjacência e constrói um grafo.
+    Recebe uma matriz de adjacência ponderada e constrói um grafo.
     Cada vértice representa uma sala.
-    Cada aresta representa uma porta.
+    Cada aresta representa uma passagem, com seu respectivo peso.
     """
 
     n = len(matriz)
@@ -23,39 +23,28 @@ def criar_grafo(matriz):
 
     for i in range(n):
         for j in range(n):
+            peso = matriz[i][j]
 
-            # if matriz[i][j] not in (0, 1):
-            #     raise ValueError("A matriz deve conter apenas 0 e 1.")
-
-            # Comentei as linhas acima, pq agora o grafo tem pesos, 
-            # e coloquei uma correção da validação abaixo
-
-            if not np.isfinite(matriz[i][j]) and not np.isposinf(matriz[i][j]):
+            if not (np.isfinite(peso) or np.isposinf(peso)):
                 raise ValueError("Peso inválido.")
 
-            if matriz[i][j] != matriz[j][i]:
+            if np.isfinite(peso) and peso < 0:
+                raise ValueError("Os pesos não podem ser negativos.")
+
+            if peso != matriz[j][i]:
                 raise ValueError("A matriz precisa ser simétrica.")
 
-            if i == j and matriz[i][j] != 0:
+            if i == j and peso != 0:
                 raise ValueError("Não são permitidos laços.")
 
     G = nx.Graph()
-
     G.add_nodes_from(range(1, n + 1))
-
-    # for i in range(n):
-    #     for j in range(i + 1, n):
-    #         if matriz[i][j] == 1:
-    #             G.add_edge(i + 1, j + 1)
-
-    # não tava aparecendo as arestas, aí eu criei o bloco abaixo:
 
     for i in range(n):
         for j in range(i + 1, n):
-
             peso = matriz[i][j]
 
             if np.isfinite(peso):
-                G.add_edge(i + 1, j + 1, weight=int(peso))
+                G.add_edge(i + 1, j + 1, weight=float(peso))
 
     return G

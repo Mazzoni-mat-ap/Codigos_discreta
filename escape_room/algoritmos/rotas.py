@@ -1,17 +1,19 @@
+
 import networkx as nx
 
 
 def menor_caminho(G, entrada, saida):
-    """Encontra o menor caminho entre duas salas."""
+    """Encontra o caminho de menor custo entre duas salas."""
 
     try:
         caminho = nx.shortest_path(
             G,
             source=entrada,
-            target=saida
+            target=saida,
+            weight="weight"
         )
 
-        distancia = len(caminho) - 1
+        distancia = nx.path_weight(G, caminho, weight="weight")
 
         return caminho, distancia
 
