@@ -1,4 +1,4 @@
-"""Dados do mapa da Fuga do Laboratório (ver docs/Fuga_do_Laboratorio.pdf)."""
+# Dados do mapa da Fuga do Laboratório (ver docs/Fuga_do_Laboratorio.pdf).
 
 N_SALAS = 25
 ENTRADA = 1
