@@ -1,0 +1,762 @@
+\documentclass[11pt,a4paper]{article}
+
+% ------------------------------------------------------------------ pacotes
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\input{gerado/numeros.tex}
+
+% ------------------------------------------------------------------ ambientes
+\theoremstyle{definition}
+\newtheorem{definicao}{Definição}[section]
+\newtheorem{observacao}[definicao]{Observação}
+\theoremstyle{plain}
+\newtheorem{teorema}[definicao]{Teorema}
+\newtheorem{proposicao}[definicao]{Proposição}
+\newtheorem{lema}[definicao]{Lema}
+\newtheorem{corolario}[definicao]{Corolário}
+\renewcommand{\qedsymbol}{C.Q.D.}
+
+\floatname{algorithm}{Algoritmo}
+\renewcommand{\algorithmicrequire}{\textbf{Entrada:}}
+\renewcommand{\algorithmicensure}{\textbf{Saída:}}
+
+\newcommand{\repo}{\url{https://github.com/mrcelomn/trabalhomatdis}}
+\newcommand{\dE}{d_{E}}
+
+% ------------------------------------------------------------------ código
+\definecolor{fundo}{HTML}{F6F8FA}
+\definecolor{comentario}{HTML}{6A737D}
+\definecolor{palavra}{HTML}{1D4ED8}
+\definecolor{texto}{HTML}{0F766E}
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{palavra}\bfseries,
+  commentstyle=\color{comentario}\itshape,
+  stringstyle=\color{texto},
+  backgroundcolor=\color{fundo},
+  numbers=left, numberstyle=\tiny\color{comentario}, numbersep=6pt,
+  frame=single, rulecolor=\color{black!15},
+  breaklines=true, showstringspaces=false, tabsize=4,
+  columns=fullflexible, keepspaces=true,
+  extendedchars=true,
+  literate=
+    {á}{{\'a}}1 {â}{{\^a}}1 {ã}{{\~a}}1 {à}{{\`a}}1
+    {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1
+    {ó}{{\'o}}1 {ô}{{\^o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1
+    {ç}{{\c{c}}}1 {Ú}{{\'U}}1 {É}{{\'E}}1 {Ã}{{\~A}}1
+}
+
+% ------------------------------------------------------------------ documento
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  {\large FGV EMAp --- Escola de Matemática Aplicada\par}
+  {\large Matemática Discreta\par}
+  \vspace{4cm}
+  {\LARGE\bfseries Fuga do Laboratório\par}
+  \vspace{0.4cm}
+  {\Large Otimização de rotas de fuga por meio de algoritmos aplicados em Teoria dos Grafos\par}
+  \vspace{3cm}
+  {\large
+    Frederico Taveira Martins de Souza\\[2pt]
+    Ian Luca Marinho Aguiar\\[2pt]
+    João Vitor Neves Mazzoni\\[2pt]
+    Marcelo Maiato Neves\par}
+  \vfill
+  {\large Rio de Janeiro, novembro de 2026\par}
+\end{titlepage}
+
+\begin{abstract}
+Situações de evacuação, como um incêndio em um prédio ou um alarme em um
+laboratório, têm sempre a mesma estrutura: ambientes ligados por passagens, um
+ponto de partida, uma saída e um tempo limite. A Teoria dos Grafos é a linguagem
+natural para esse tipo de problema, pois transforma a pergunta ``por onde fugir?''
+em perguntas precisas sobre caminhos, distâncias e conexidade, para as quais
+existem algoritmos cuja correção pode ser demonstrada. O objetivo deste trabalho é
+modelar e demonstrar, a partir da Teoria dos Grafos, formas otimizadas de
+encontrar rotas de fuga em contextos distintos. Escolhemos como escopo um
+\emph{escape room}, a \emph{Fuga do Laboratório}: um ambiente controlado, com
+regras explícitas, em que o problema pode ser enunciado e verificado por
+completo. Resolvido o problema da travessia entre as salas de um escape room, a
+mesma lógica de resolução se aplica a contextos reais, como a evacuação de
+prédios em incêndio. A metodologia consiste em modelar o ambiente como um grafo
+com pesos, em que salas são vértices, portas são arestas e os pesos são os tempos
+de travessia; reunir e demonstrar as definições e propriedades necessárias;
+contrapor dois critérios de otimização de rotas, o menor número de portas, obtido
+pela busca em largura, e o menor tempo, obtido pelo Algoritmo de Dijkstra; e
+caracterizar as salas cuja obstrução impede a fuga. Todos os algoritmos foram
+implementados em Python e reunidos em um simulador interativo, no qual também
+aplicamos o modelo à evacuação de um prédio em chamas. O relatório apresenta as
+definições e propriedades utilizadas, os algoritmos com suas demonstrações de
+correção, os exemplos simulados e, na conclusão, os resultados obtidos. O código
+e o simulador estão disponíveis em \repo.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ==================================================================
+\section{Introdução}
+
+Planejar uma rota de fuga é decidir, entre muitas sequências possíveis de
+ambientes, qual leva da posição atual até a saída da melhor maneira. A Teoria dos
+Grafos oferece exatamente as ferramentas para isso: assim como no problema das
+pontes de Königsberg, partimos de uma situação concreta, construímos um modelo
+matemático e traduzimos a pergunta original para o modelo, onde ela pode ser
+respondida com rigor.
+
+O objetivo deste trabalho é modelar e demonstrar, a partir da Teoria dos Grafos,
+formas otimizadas de encontrar rotas de fuga. Escolhemos um escape room porque ele
+reúne, em escala controlada, todos os elementos de uma evacuação real (salas,
+passagens, tempo limite e obstáculos) e permite verificar cada resposta. Uma vez
+resolvido o problema da travessia entre as salas, a mesma lógica se aplica a
+outros contextos, como mostramos ao final com a evacuação de um prédio em chamas.
+
+\paragraph{A história.} Durante uma visita ao laboratório da professora, um
+experimento dá errado: o alarme toca, as portas se trancam e, em 40 minutos, o
+prédio será selado. A professora está presa na sala de controle e avisa pelo
+rádio que, para chegar até ela e sair, é preciso passar pela Portaria (onde está o
+crachá que destrava os laboratórios), pela Sala das máscaras (os laboratórios
+estão com fumaça), pela Sala de limpeza (quem sai da fumaça precisa se limpar),
+pela Sala das câmeras (onde se descobre a senha do depósito) e, por fim, pela
+própria Sala de controle, que desliga o alarme e abre a saída.
+
+\paragraph{Desafio:} \emph{é possível sair da entrada e chegar à saída em no
+máximo 40 minutos? Se sim, por onde?}
+
+\paragraph{Modelo.} Cada sala é um vértice e cada porta é uma aresta; o peso de
+cada aresta é o tempo, em minutos, para atravessar o corredor correspondente
+(Figura~\ref{fig:mapa} e Tabela~\ref{tab:nomes}). O grafo obtido é definido
+formalmente na Definição~\ref{def:escape}, e o desafio passa a ser:
+
+\paragraph{Desafio no modelo:} \emph{a distância entre a entrada e a saída é
+menor ou igual a 40?} (Definições~\ref{def:distancia} e~\ref{def:fuga}).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figuras/mapa.pdf}
+  \caption{O grafo do escape room. Verde: entrada ($v_1$) e saída ($v_{25}$);
+  laranja: as cinco salas obrigatórias da história. O número em cada aresta é o
+  seu peso, em minutos.}
+  \label{fig:mapa}
+\end{figure}
+
+\begin{table}[H]
+  \centering
+  \caption{Nome de cada sala.}
+  \label{tab:nomes}
+  \small
+  \input{gerado/nomes_salas.tex}
+\end{table}
+
+\paragraph{Organização.} A Seção~\ref{sec:definicoes} reúne todas as definições
+utilizadas, separando as definições gerais da Teoria dos Grafos das definições
+próprias deste trabalho, junto com as propriedades que delas decorrem. A
+Seção~\ref{sec:resultados} apresenta a busca em largura e o Algoritmo de Dijkstra,
+demonstra a correção de cada um e os contrapõe no grafo do escape room. A
+Seção~\ref{sec:exemplos} traz os cenários simulados, incluindo a evacuação de um
+prédio em chamas, e a Seção~\ref{sec:conclusao} resume os resultados.
+
+% ==================================================================
+\section{Definições básicas e propriedades}\label{sec:definicoes}
+
+Os algoritmos usados neste trabalho só garantem rotas ótimas porque se apoiam em
+propriedades que podem ser demonstradas. Por isso, reunimos nesta seção todas as
+definições utilizadas no relatório, numeradas para serem citadas adiante, e
+demonstramos cada propriedade de que precisamos. Separamos as definições gerais,
+que são convenções da Teoria dos Grafos e seguem as notas de aula~\cite{notas},
+das definições próprias deste trabalho, criadas para modelar o problema da fuga.
+
+\subsection{Definições gerais}
+
+\begin{definicao}[Grafo]\label{def:grafo}
+Um GRAFO $G$ é constituído por dois conjuntos $V$ e $E$, onde os elementos de $V$
+são chamados de VÉRTICES e $E$ é um conjunto de pares não-ordenados de elementos
+de $V$, chamados de ARESTAS. Escreve-se $G=(V,E)$. Neste trabalho, todo grafo é
+finito.
+\end{definicao}
+
+\begin{definicao}[Adjacência e grafo simples]\label{def:simples}
+Seja $G=(V,E)$ um grafo e $e = \{v_i, v_j\} \in E$. Diz-se que $v_i$ e $v_j$ são
+ADJACENTES e que $e$ INCIDE em $v_i$ e $v_j$. Se $v_i = v_j$, a aresta $e$ é um
+LAÇO. Um grafo é dito SIMPLES se não possui laços nem arestas paralelas (arestas
+distintas com os mesmos extremos).
+\end{definicao}
+
+\begin{definicao}[Vizinhança]\label{def:vizinhanca}
+Dado $G=(V,E)$ e $v \in V$, a VIZINHANÇA de $v$ é o conjunto
+$N(v) = \{u \in V : \{u,v\} \in E\}$ dos vértices adjacentes a $v$.
+\end{definicao}
+
+\begin{definicao}[Grafo com pesos]\label{def:pesos}
+Um GRAFO COM PESOS é um grafo $G=(V,E)$ no qual cada aresta $e$ tem associado um
+número real $w(e)$, chamado de PESO da aresta. Para $e = \{u,v\}$, escreve-se
+também $w(u,v)$.
+\end{definicao}
+
+\begin{definicao}[Subgrafo e remoções]\label{def:subgrafo}
+Dados $G=(V,E)$ e $G'=(V',E')$, diz-se que $G'$ é SUBGRAFO de $G$ se
+$V' \subseteq V$, $E' \subseteq E$ e toda aresta de $E'$ tem seus extremos em
+$V'$. Para $S \subseteq V$, $G \setminus S$ denota o subgrafo obtido removendo de
+$G$ os vértices de $S$ e todas as arestas que incidem neles; para $e \in E$,
+$G \setminus \{e\}$ denota o subgrafo obtido removendo apenas a aresta $e$.
+\end{definicao}
+
+\begin{definicao}[Caminho]\label{def:caminho}
+Seja $G=(V,E)$ um grafo e sejam $v_0, v_n \in V$. Um CAMINHO de COMPRIMENTO $n$
+de $v_0$ até $v_n$ é uma sequência alternando vértices e arestas, com $n+1$
+vértices e $n$ arestas (permitindo repetições),
+$P = (v_0, e_1, v_1, e_2, \dots, e_n, v_n)$, onde $e_i = \{v_{i-1}, v_i\}$ para
+$i = 1, \dots, n$. Denotamos o comprimento por $\ell(P) = n$. Num grafo simples,
+escreve-se só a sequência de vértices $(v_0, v_1, \dots, v_n)$. Um CAMINHO
+SIMPLES é um caminho em que nenhum vértice aparece mais de uma vez.
+\end{definicao}
+
+\begin{definicao}[Comprimento com pesos]\label{def:compesos}
+Em um grafo com pesos, o COMPRIMENTO COM PESOS de um caminho $P$ é a soma dos
+pesos das suas arestas, $w(P) = \sum_{i=1}^{n} w(e_i)$.
+\end{definicao}
+
+\begin{definicao}[Conexidade]\label{def:conexo}
+Um grafo $G=(V,E)$ é CONEXO se, para todo par $u, v \in V$, existe um caminho em
+$G$ de $u$ a $v$. A COMPONENTE CONEXA de $G$ que contém $v$ é o subgrafo formado
+pelos vértices alcançáveis a partir de $v$ por algum caminho de $G$ e por todas
+as arestas de $G$ cujos extremos estão nesse conjunto.
+\end{definicao}
+
+\begin{definicao}[Distâncias]\label{def:distancia}
+Sejam $u, v$ vértices de um grafo $G$. A DISTÂNCIA EM ARESTAS $\dE(u,v)$ é o menor
+comprimento $\ell(P)$ entre os caminhos $P$ de $u$ a $v$. Se $G$ tem pesos
+positivos, a DISTÂNCIA $d(u,v)$ é o menor comprimento com pesos $w(P)$ entre esses
+caminhos. Se não existe caminho de $u$ a $v$, define-se
+$\dE(u,v) = d(u,v) = +\infty$.
+\end{definicao}
+
+\begin{definicao}[Matriz de adjacência]\label{def:adjacencia}
+Seja $G=(V,E)$ um grafo simples com $n = |V|$ vértices rotulados
+$v_1, \dots, v_n$. A MATRIZ DE ADJACÊNCIA de $G$ é a matriz
+$A = (a_{ij}) \in \mathbb{R}^{n\times n}$ com $a_{ij} = 1$ se
+$\{v_i, v_j\} \in E$ e $a_{ij} = 0$ caso contrário. Como as arestas não têm
+orientação e não há laços, $A$ é simétrica e $a_{ii} = 0$.
+\end{definicao}
+
+\subsection{Definições próprias do trabalho}
+
+\begin{definicao}[Matriz de pesos]\label{def:matrizpesos}
+Seja $G=(V,E)$ um grafo simples com pesos e vértices $v_1, \dots, v_n$. A MATRIZ
+DE PESOS de $G$ é $W = (w_{ij})$, com $w_{ii} = 0$, $w_{ij} = w(v_i, v_j)$ se
+$\{v_i, v_j\} \in E$ e $w_{ij} = \infty$ caso contrário. Ela é a forma como o
+programa recebe um grafo, e $a_{ij} = 1$ se, e somente se, $i \ne j$ e
+$w_{ij} < \infty$.
+\end{definicao}
+
+\begin{definicao}[Grafo do escape room]\label{def:escape}
+É o grafo simples, conexo e com pesos positivos $G=(V,E)$ em que
+$V = \{v_1, \dots, v_{25}\}$ são as salas, $E$ são as 40 portas e $w(e)$ é o tempo,
+em minutos, de cada corredor, dados pela matriz de pesos do
+Apêndice~\ref{ap:matrizes}. A entrada é $s = v_1$, a saída é $t = v_{25}$ e o tempo
+limite é $T = 40$.
+\end{definicao}
+
+\begin{definicao}[Rota de fuga e condição de fuga]\label{def:fuga}
+Uma ROTA DE FUGA é um caminho de $s$ a $t$. Seu NÚMERO DE PORTAS é o comprimento
+$\ell(P)$ (Definição~\ref{def:caminho}) e seu TEMPO é o comprimento com pesos
+$w(P)$ (Definição~\ref{def:compesos}). A FUGA É POSSÍVEL se existe uma rota de
+fuga com tempo menor ou igual a $T$, isto é, se $d(s,t) \le T$.
+\end{definicao}
+
+\begin{definicao}[Bloqueios]\label{def:bloqueio}
+BLOQUEAR uma sala $v$ é passar do grafo $G$ para $G \setminus \{v\}$; FECHAR uma
+porta $e$ é passar para $G \setminus \{e\}$ (Definição~\ref{def:subgrafo}).
+\end{definicao}
+
+\begin{definicao}[Sala obrigatória]\label{def:obrigatoria}
+Um vértice $v \notin \{s,t\}$ é uma SALA OBRIGATÓRIA se $s$ e $t$ estão em
+componentes conexas diferentes de $G \setminus \{v\}$.
+\end{definicao}
+
+\subsection{Propriedades}
+
+A primeira propriedade garante que as distâncias da Definição~\ref{def:distancia}
+estão bem definidas: como um caminho pode repetir vértices, existem infinitos
+caminhos entre dois vértices, e precisamos mostrar que o menor valor existe.
+
+\begin{proposicao}\label{prop:simples}
+Sejam $u, v$ vértices de um grafo $G$ com pesos positivos, ligados por algum
+caminho. Então os mínimos que definem $\dE(u,v)$ e $d(u,v)$ existem e são
+atingidos por caminhos simples.
+\end{proposicao}
+
+\begin{proof}
+Seja $P$ um caminho de $u$ a $v$ em que algum vértice $x$ aparece duas vezes.
+Retirando de $P$ o trecho entre as duas ocorrências de $x$, obtemos um caminho de
+$u$ a $v$ com comprimento menor e, como os pesos são positivos, com comprimento
+com pesos menor. Repetindo o procedimento, que termina porque o comprimento
+diminui a cada passo, chegamos a um caminho simples $P'$ com
+$\ell(P') \le \ell(P)$ e $w(P') \le w(P)$. Como $G$ é finito, há uma quantidade
+finita de caminhos simples de $u$ a $v$, e o menor valor entre eles é menor ou
+igual ao de qualquer caminho. Logo os mínimos existem e são atingidos por caminhos
+simples.
+\end{proof}
+
+\begin{teorema}\label{teo:potencias}
+Seja $A$ a matriz de adjacência de um grafo simples $G$
+(Definição~\ref{def:adjacencia}). Então, para todo $k \in \mathbb{Z}_+$, a entrada
+$ij$ da matriz $A^k$ é a quantidade de caminhos de $v_i$ a $v_j$ de comprimento $k$.
+\end{teorema}
+
+\begin{proof}
+Por indução em $k$.
+
+\emph{Caso base} ($k = 1$): $a_{ij} = 1$ se existe aresta entre $v_i$ e $v_j$ e
+$0$ caso contrário, e os caminhos de comprimento 1 são exatamente as arestas.
+
+\emph{Hipótese indutiva:} a tese vale para $k$.
+
+\emph{Passo indutivo:} temos $(A^{k+1})_{ij} = \sum_{l=1}^{n} (A^k)_{il}\, a_{lj}$.
+Pela hipótese, $(A^k)_{il}$ conta os caminhos de comprimento $k$ de $v_i$ a $v_l$,
+e $a_{lj}$ vale 1 se $\{v_l, v_j\}$ é aresta e 0 caso contrário. Assim, cada
+parcela conta os caminhos de comprimento $k+1$ de $v_i$ a $v_j$ cujo penúltimo
+vértice é $v_l$, e a soma sobre $l$ conta todos eles.
+\end{proof}
+
+As duas últimas propriedades justificam o nome dado na
+Definição~\ref{def:obrigatoria} e mostram por que essas salas são críticas.
+
+\begin{proposicao}\label{prop:obrigatoria}
+Seja $G$ conexo e $v \notin \{s,t\}$. Então $v$ aparece em toda rota de fuga se, e
+somente se, $v$ é uma sala obrigatória.
+\end{proposicao}
+
+\begin{proof}
+($\Leftarrow$) Se alguma rota de fuga não passasse por $v$, ela também seria um
+caminho em $G \setminus \{v\}$, e $s$ e $t$ estariam na mesma componente conexa de
+$G \setminus \{v\}$, contradição.
+
+($\Rightarrow$) Se $s$ e $t$ estivessem na mesma componente conexa de
+$G \setminus \{v\}$, existiria nesse grafo um caminho de $s$ a $t$. Esse caminho
+também está em $G$ e não passa por $v$, contradição.
+\end{proof}
+
+\begin{corolario}\label{cor:bloqueio}
+Se $v$ é uma sala obrigatória, então em $G \setminus \{v\}$ vale
+$d(s,t) = +\infty$. Em particular, bloquear $v$ torna a fuga impossível para
+qualquer tempo limite $T$.
+\end{corolario}
+
+\begin{proof}
+Pela Definição~\ref{def:obrigatoria}, não existe caminho de $s$ a $t$ em
+$G \setminus \{v\}$; pela Definição~\ref{def:distancia}, $d(s,t) = +\infty > T$.
+\end{proof}
+
+% ==================================================================
+\section{Resultados principais}\label{sec:resultados}
+
+Nesta seção apresentamos os dois algoritmos que contrapomos para encontrar rotas
+de fuga, demonstramos que cada um encontra a rota ótima segundo o seu critério e
+aplicamos ambos ao grafo do escape room (Definição~\ref{def:escape}).
+
+\subsection{Menos portas: busca em largura}
+
+A busca em largura (BFS) explora o grafo em camadas: primeiro os vizinhos da
+origem, depois os vizinhos dos vizinhos, e assim por diante. Ela ignora os pesos
+e, como veremos, encontra a rota com o menor número de portas. Em aula, a mesma
+busca foi apresentada como forma de construir uma árvore geradora de um grafo
+conexo; aqui usamos os níveis dessa construção para medir distâncias em arestas.
+
+\begin{algorithm}[H]
+\caption{Busca em largura de $a$ até $z$}\label{alg:bfs}
+\begin{algorithmic}[1]
+\Require grafo $G=(V,E)$, vértices $a$ e $z$
+\Ensure caminho de $a$ até $z$ com o menor número de arestas
+\State marque $a$ como visitado; $\mathrm{nivel}(a) \gets 0$; $F \gets (a)$ \Comment{fila}
+\While{$F$ não está vazia}
+  \State retire o primeiro vértice $u$ de $F$
+  \If{$u = z$} \Return o caminho de $a$ até $z$ refeito pelos pais \EndIf
+  \For{cada $v \in N(u)$ ainda não visitado}
+    \State marque $v$; $\mathrm{pai}(v) \gets u$; $\mathrm{nivel}(v) \gets \mathrm{nivel}(u)+1$; coloque $v$ no fim de $F$
+  \EndFor
+\EndWhile
+\State \Return ``não existe caminho''
+\end{algorithmic}
+\end{algorithm}
+
+\begin{lema}\label{lem:fila}
+Em qualquer momento da execução, se $F = (u_1, \dots, u_r)$, então
+$\mathrm{nivel}(u_1) \le \dots \le \mathrm{nivel}(u_r) \le \mathrm{nivel}(u_1) + 1$.
+Em particular, os vértices saem da fila em ordem não decrescente de nível.
+\end{lema}
+
+\begin{proof}
+No início, $F = (a)$ e a afirmação vale. Retirar o primeiro elemento preserva a
+propriedade. Quando $u$ é retirado, a nova fila começa com um vértice de nível
+pelo menos $\mathrm{nivel}(u)$ e termina com vértices de nível no máximo
+$\mathrm{nivel}(u)+1$; os vértices inseridos em seguida têm nível exatamente
+$\mathrm{nivel}(u)+1$, o que preserva as duas desigualdades.
+\end{proof}
+
+\begin{proposicao}\label{prop:bfs}
+Executando o Algoritmo~\ref{alg:bfs} sem a parada da linha 4, um vértice $v$ é
+visitado se, e somente se, existe caminho de $a$ a $v$; e, nesse caso,
+$\mathrm{nivel}(v) = \dE(a,v)$ (Definição~\ref{def:distancia}). Em particular, o
+caminho devolvido na linha 4 é uma rota com o menor número de arestas.
+\end{proposicao}
+
+\begin{proof}
+Seguindo os pais a partir de um vértice visitado $v$, obtemos um caminho de $a$ a
+$v$ com $\mathrm{nivel}(v)$ arestas; logo todo vértice visitado é alcançável e
+$\mathrm{nivel}(v) \ge \dE(a,v)$. Reciprocamente, se $(a = x_0, \dots, x_k = v)$
+é um caminho e $x_i$ fosse o primeiro vértice não visitado, então $x_{i-1}$ foi
+visitado, entrou na fila e foi retirado dela, momento em que $x_i$ teria sido
+visitado, contradição.
+
+Suponha agora, por contradição, que existe $v$ com
+$\mathrm{nivel}(v) > \dE(a,v)$, e escolha o de menor $\dE(a,v) = k$. Seja $u$ o
+vértice anterior a $v$ em um caminho com $k$ arestas; então $\dE(a,u) = k-1$ e,
+pela escolha de $v$, $\mathrm{nivel}(u) = k-1$. Quando $u$ é retirado da fila, ou
+$v$ ainda não foi visitado, e então recebe $\mathrm{nivel}(v) = k$; ou $v$ já
+entrou na fila antes, e pelo Lema~\ref{lem:fila} tem
+$\mathrm{nivel}(v) \le \mathrm{nivel}(u) + 1 = k$. Nos dois casos,
+$\mathrm{nivel}(v) \le k$, contradição.
+\end{proof}
+
+Como cada vértice entra na fila no máximo uma vez e cada aresta é examinada duas
+vezes, a busca em largura faz $O(|V| + |E|)$ operações.
+
+\subsection{Menor tempo: Algoritmo de Dijkstra}
+
+Para levar em conta os pesos, usamos o Algoritmo de Dijkstra~\cite{dijkstra}, como
+visto em aula. Seja $G=(V,E)$ um grafo com pesos positivos $w(u,v) > 0$. Cada
+vértice $x$ recebe um RÓTULO $L(x)$, atualizado ao longo das iterações, e $T$
+denota o conjunto dos vértices ainda não visitados.
+
+\begin{algorithm}[H]
+\caption{Dijkstra de $a$ até $z$}\label{alg:dijkstra}
+\begin{algorithmic}[1]
+\Require grafo $G=(V,E)$ com pesos positivos, vértices $a$ e $z$
+\Ensure $L(z) = d(a,z)$ e um caminho de $a$ até $z$ com comprimento com pesos $L(z)$
+\State $L(a) \gets 0$; $L(x) \gets +\infty$ para todo $x \ne a$; $T \gets V$
+\While{$T \ne \emptyset$}
+  \State escolha $v \in T$ com $L(v)$ mínimo
+  \If{$L(v) = +\infty$} \textbf{pare} \Comment{os vértices restantes são inalcançáveis}
+  \EndIf
+  \State $T \gets T \setminus \{v\}$
+  \For{cada $x \in N(v) \cap T$}
+    \If{$L(v) + w(v,x) < L(x)$}
+      \State $L(x) \gets L(v) + w(v,x)$; $\mathrm{pai}(x) \gets v$
+    \EndIf
+  \EndFor
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+\begin{teorema}\label{teo:dijkstra}
+Seja $G=(V,E)$ um grafo com pesos positivos. Cada vez que o
+Algoritmo~\ref{alg:dijkstra} retira um vértice $v$ de $T$ (linha 6), vale
+$L(v) = d(a,v)$.
+\end{teorema}
+
+\begin{proof}
+Por indução finita sobre o número de vértices já retirados de $T$.
+
+\emph{B.I.:} na primeira iteração, o algoritmo retira $a$, com $L(a) = 0 = d(a,a)$.
+
+\emph{H.I.:} suponha que, após $k$ iterações, o rótulo de cada um dos $k$ vértices
+retirados de $T$ é igual à sua distância a partir de $a$.
+
+\emph{P.I.:} na iteração $k+1$, seja $v$ o vértice retirado, ou seja,
+$L(v) = \min\{L(u) : u \in T\}$. Todo rótulo finito é o comprimento com pesos do
+caminho obtido seguindo os pais, logo $L(v) \ge d(a,v)$. Suponha, por contradição,
+que existe um caminho $P$ de $a$ até $v$ com $w(P) < L(v)$. Seja $u$ o primeiro
+vértice de $P$ que está em $T$ (pode ser o próprio $v$) e seja $x$ o vértice que
+precede $u$ em $P$. Como $x$ já saiu de $T$, pela H.I. o trecho de $P$ até $x$ tem
+comprimento com pesos pelo menos $L(x)$, e quando $x$ saiu de $T$ o rótulo de $u$
+passou a ser no máximo $L(x) + w(x,u)$. Como os pesos são positivos e $u$ é
+escolhido entre os de $T$,
+\[
+  w(P) \ <\ L(v) \ \le\ L(u) \ \le\ L(x) + w(x,u) \ \le\ w(\text{trecho de $P$ até $u$})
+  \ \le\ w(P),
+\]
+o que é uma contradição. Logo $L(v) = d(a,v)$.
+\end{proof}
+
+\begin{corolario}\label{cor:dijkstra}
+O algoritmo termina após no máximo $n = |V|$ iterações. Se $z$ é alcançável a
+partir de $a$, então $L(z) = d(a,z)$ e o caminho de $a$ até $z$ obtido seguindo os
+pais tem comprimento com pesos $d(a,z)$; caso contrário, $L(z) = +\infty$. Como
+cada iteração procura o mínimo entre no máximo $n$ rótulos, a complexidade é
+$O(n^2)$.
+\end{corolario}
+
+\begin{proof}
+Cada iteração retira um vértice de $T$, logo há no máximo $n$ iterações. Se $z$ é
+alcançável e o algoritmo parasse na linha 4 com $z \in T$, tomaríamos um caminho
+de $a$ a $z$ e o seu primeiro vértice $u$ em $T$; o vértice anterior a $u$ já
+saiu de $T$ com rótulo finito, logo $L(u) < +\infty$, contradizendo a parada.
+Assim $z$ é retirado de $T$ e, pelo Teorema~\ref{teo:dijkstra}, $L(z) = d(a,z)$.
+O caminho pelos pais tem comprimento com pesos $L(z)$, pois a linha 9 sempre faz
+$L(x) = L(\mathrm{pai}(x)) + w(\mathrm{pai}(x), x)$. Se $z$ não é alcançável,
+nenhum caminho pelos pais chega a $z$, e seu rótulo permanece $+\infty$.
+\end{proof}
+
+\begin{observacao}
+A positividade dos pesos é usada na demonstração e é garantida pelo modelo
+(Definição~\ref{def:escape}): atravessar um corredor sempre leva algum tempo.
+\end{observacao}
+
+\subsection{Contraposição dos dois critérios no escape room}
+
+Aplicamos agora os dois algoritmos ao grafo da Definição~\ref{def:escape}, com
+$a = s = v_1$ e $z = t = v_{25}$.
+
+\paragraph{Menor tempo.} Pelo Teorema~\ref{teo:dijkstra}, o Algoritmo de Dijkstra
+fornece $d(v_1, v_{25}) = 38$, com a rota
+\[
+  v_1 \to v_2 \to v_4 \to v_8 \to v_9 \to v_{11} \to v_{12} \to v_{13} \to v_{15}
+  \to v_{17} \to v_{20} \to v_{21} \to v_{23} \to v_{25},
+\]
+de 13 portas. Como $38 \le 40$, pela Definição~\ref{def:fuga} a fuga é possível,
+com folga de apenas 2 minutos.
+
+\paragraph{Menos portas.} Pela Proposição~\ref{prop:bfs}, a busca em largura
+fornece uma rota com $\dE(v_1, v_{25})$ portas. Mostramos a seguir, sem depender
+do algoritmo, que esse número é \kmin{} e que nenhuma rota com \kmin{} portas
+cabe no tempo limite.
+
+\begin{proposicao}\label{prop:onze}
+No grafo do escape room, $\dE(v_1, v_{25}) = \kmin$, e existem exatamente
+\qtdcaminhos{} rotas de fuga com \kmin{} portas.
+\end{proposicao}
+
+\begin{proof}
+Calculamos as potências da matriz de adjacência: $(A^k)_{1,25} = 0$ para
+$k = 1, \dots, 10$ e $(A^{\kmin})_{1,25} = \qtdcaminhos$. Pelo
+Teorema~\ref{teo:potencias}, não existe caminho de $v_1$ a $v_{25}$ com menos de
+\kmin{} arestas, e existem exatamente \qtdcaminhos{} caminhos com \kmin{} arestas.
+\end{proof}
+
+\begin{table}[H]
+  \centering
+  \caption{As \qtdcaminhos{} rotas de fuga com \kmin{} portas e o tempo de cada uma.}
+  \label{tab:onze}
+  \small
+  \input{gerado/caminhos_11.tex}
+\end{table}
+
+\begin{corolario}\label{cor:contar}
+Toda rota de fuga com o menor número de portas tem tempo de pelo menos 43
+minutos. Logo, quem escolhe a rota contando portas fica preso, qualquer que seja a
+rota de \kmin{} portas escolhida.
+\end{corolario}
+
+\begin{proof}
+Pela Proposição~\ref{prop:onze}, as rotas com \kmin{} portas são exatamente as da
+Tabela~\ref{tab:onze}, cujos tempos são 43, 45, 45 e 47, todos maiores que 40.
+\end{proof}
+
+Todas essas rotas passam pelos corredores longos $v_8 \to v_{10}$ (6 min) e
+$v_{15} \to v_{18} \to v_{21}$ (7 + 6 min), que a rota do Dijkstra evita com duas
+portas a mais.
+
+\paragraph{Salas obrigatórias.} Para encontrar as salas obrigatórias
+(Definição~\ref{def:obrigatoria}), o programa bloqueia uma sala $v$ por vez e roda
+a busca em largura em $G \setminus \{v\}$; pela Proposição~\ref{prop:bfs}, a
+busca não chega a $t$ se, e somente se, $s$ e $t$ ficaram em componentes conexas
+diferentes. No grafo do escape room, as salas obrigatórias são exatamente $v_4$,
+$v_8$, $v_{12}$, $v_{15}$ e $v_{21}$, as cinco salas da história. Pela
+Proposição~\ref{prop:obrigatoria}, toda rota de fuga passa por elas, e pelo
+Corolário~\ref{cor:bloqueio}, bloquear qualquer uma delas impede a fuga.
+
+% ==================================================================
+\section{Exemplos}\label{sec:exemplos}
+
+\subsection{As duas rotas no mapa original}
+
+As Figuras~\ref{fig:rapido} e~\ref{fig:portas} mostram as rotas encontradas pelos
+dois algoritmos. Elas diferem em dois trechos: entre $v_8$ e $v_{12}$ (6 min por
+$v_9, v_{11}$ contra 8 min por $v_{10}$) e entre $v_{15}$ e $v_{21}$ (10 min por
+$v_{17}, v_{20}$ contra 13 min por $v_{18}$).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figuras/caminho_rapido.pdf}
+  \caption{Rota de menor tempo (Dijkstra): 13 portas, 38 minutos.}
+  \label{fig:rapido}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figuras/caminho_portas.pdf}
+  \caption{Rota com menos portas (busca em largura): 11 portas, 43 minutos.}
+  \label{fig:portas}
+\end{figure}
+
+\subsection{Imprevistos no laboratório}
+
+Simulamos quatro situações, sempre de $v_1$ a $v_{25}$ com limite de 40 minutos,
+usando os bloqueios da Definição~\ref{def:bloqueio}: fumaça em uma sala bloqueia
+o vértice, e um corredor alagado fecha a aresta. A Tabela~\ref{tab:cenarios} traz
+o tempo e, entre parênteses, o número de portas da rota encontrada por cada
+algoritmo.
+
+\begin{table}[H]
+  \centering
+  \caption{Resultados por cenário: tempo em minutos (número de portas).}
+  \label{tab:cenarios}
+  \input{gerado/tabela_cenarios.tex}
+\end{table}
+
+As rotas de menor tempo de cada cenário são:
+
+\input{gerado/caminhos_cenarios.tex}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figuras/cenario_fumaca.pdf}\\[2pt]
+  {\small (a) Fumaça na $v_{17}$: 40 minutos.}\\[8pt]
+  \includegraphics[width=\textwidth]{figuras/cenario_alagado.pdf}\\[2pt]
+  {\small (b) Corredor $v_9$--$v_{11}$ alagado: 40 minutos. A sala $v_{10}$ passa a ser obrigatória.}
+  \caption{Um imprevisto: a fuga ainda é possível, mas no limite.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figuras/cenario_dois.pdf}\\[2pt]
+  {\small (a) Os dois imprevistos juntos: 42 minutos.}\\[8pt]
+  \includegraphics[width=\textwidth]{figuras/cenario_controle.pdf}\\[2pt]
+  {\small (b) Sala de controle $v_{21}$ trancada: não há rota de fuga.}
+  \caption{Situações em que a fuga é impossível.}
+\end{figure}
+
+Cada imprevisto sozinho custa exatamente 2 minutos e consome toda a folga, e os
+dois juntos impedem a fuga. Fechar o corredor $v_9$--$v_{11}$ faz com que toda
+rota passe por $v_{10}$, que se torna uma sala obrigatória: uma obstrução pode
+criar novos pontos críticos. Já trancar $v_{21}$ é o caso do
+Corolário~\ref{cor:bloqueio}: nenhuma mudança de tempo resolve, porque não existe
+rota de fuga.
+
+\subsection{Um caso real: evacuação de um prédio em chamas}
+
+A mesma modelagem se aplica a um prédio de escritórios de dois andares com duas
+escadas, em que as pessoas precisam sair de uma sala de reunião no 2º andar e
+chegar ao ponto de encontro do lado de fora. Os vértices são:
+\input{gerado/nomes_predio.tex}. Os pesos estão em minutos, o tempo limite é de 5
+minutos, e a matriz de pesos (Definição~\ref{def:matrizpesos}) está no arquivo
+\texttt{exemplos/predio\_em\_chamas.csv} do repositório, de onde foi importada
+diretamente no simulador.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figuras/predio_0.pdf}
+  \caption{O prédio sem fogo: a rota de menor tempo (azul) desce pela escada A e
+  sai pela saída de emergência.}
+\end{figure}
+
+\begin{table}[H]
+  \centering
+  \caption{Evacuação do prédio: tempo em minutos (número de portas).}
+  \label{tab:predio}
+  \input{gerado/tabela_predio.tex}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figuras/predio_2.pdf}
+  \caption{Fogo na cozinha e fumaça na escada B: a única rota restante não cabe no
+  limite de tempo.}
+\end{figure}
+
+Os mesmos fenômenos do escape room reaparecem: a rota com menos portas é mais
+lenta que a de menor tempo; o fogo na cozinha torna a recepção e a saída principal
+salas obrigatórias; e, com as duas escadas tomadas, o 2º andar fica em uma
+componente conexa diferente da saída.
+
+\subsection{Implementação e simulador}
+
+Os algoritmos foram implementados em Python sem bibliotecas de grafos; a
+biblioteca NetworkX foi usada apenas nos testes automáticos, para conferir os
+resultados em 200 grafos aleatórios. O grafo é guardado como lista de adjacência:
+para cada vértice $v$, guardamos $N(v)$ e os pesos das arestas. O simulador,
+feito com Streamlit, mostra o grafo com as rotas do Dijkstra e da busca em
+largura; clicando em um vértice, a sala é bloqueada e tudo é recalculado. Também é
+possível alterar pesos, fechar portas, trocar a entrada e a saída e importar uma
+matriz de pesos qualquer, como fizemos com o prédio em chamas.
+
+% ==================================================================
+\section{Conclusão}\label{sec:conclusao}
+
+Modelar o escape room como um grafo com pesos transformou o desafio da fuga em um
+problema de distâncias, e os resultados demonstrados respondem a ele. A fuga é
+possível: o Algoritmo de Dijkstra encontra uma rota de 38 minutos, dentro do
+limite de 40. Por outro lado, a rota com menos portas, encontrada pela busca em
+largura, tem 11 portas e leva 43 minutos, e as potências da matriz de adjacência
+mostram que todas as 4 rotas com 11 portas levam entre 43 e 47 minutos. Minimizar
+o número de passagens não é o mesmo que minimizar o tempo, e só o critério com
+pesos garante a fuga.
+
+As salas obrigatórias da história, $v_4$, $v_8$, $v_{12}$, $v_{15}$ e $v_{21}$,
+são exatamente as que separam a entrada da saída, e bloquear qualquer uma delas
+torna a distância infinita. As simulações mostram ainda que a folga é pequena: um
+imprevisto consome os 2 minutos de margem e dois imprevistos impedem a fuga.
+
+Por fim, a mesma lógica se aplicou à evacuação de um prédio em chamas: sem fogo,
+a saída leva 4,4 minutos; com fogo na cozinha, 4,7 minutos; com fogo e fumaça em
+uma das escadas, 5,4 minutos, acima do limite; e, com as duas escadas tomadas, não
+existe rota. Isso confirma a ideia central do trabalho: resolvido o problema da
+travessia em um escape room, o mesmo modelo e os mesmos algoritmos servem para
+planejar rotas de fuga em contextos reais.
+
+% ==================================================================
+\begin{thebibliography}{9}
+\bibitem{notas} Notas de aula de Matemática Discreta, FGV EMAp, 2026.
+\bibitem{johnsonbaugh} R. Johnsonbaugh. \emph{Discrete Mathematics}. Pearson.
+\bibitem{rangel} S. Rangel. \emph{Teoria dos Grafos}. UNESP.
+\bibitem{wilson} R. J. Wilson. \emph{Introduction to Graph Theory}. Pearson.
+\bibitem{dijkstra} E. W. Dijkstra. A note on two problems in connexion with
+  graphs. \emph{Numerische Mathematik}, 1:269--271, 1959.
+\end{thebibliography}
+
+% ==================================================================
+\appendix
+
+\section{Matrizes do grafo do escape room}\label{ap:matrizes}
+
+\begin{table}[H]
+  \centering
+  \caption{Matriz de adjacência $A$ (Definição~\ref{def:adjacencia}).}
+  \resizebox{\textwidth}{!}{\input{gerado/matriz_adjacencia.tex}}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Matriz de pesos $W$, em minutos (Definição~\ref{def:matrizpesos}).}
+  \resizebox{\textwidth}{!}{\input{gerado/matriz_pesos.tex}}
+\end{table}
+
+\section{Código dos algoritmos}
+
+O código completo e as instruções para rodar o simulador estão em \repo.
+Reproduzimos aqui o arquivo com os algoritmos.
+
+\lstinputlisting{gerado/codigo/algoritmos.py}
+
+\end{document}
