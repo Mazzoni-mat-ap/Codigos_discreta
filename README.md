@@ -1,8 +1,18 @@
 # Caminhos Mínimos com Matemática Discreta
 ### Otimização de rotas de fuga por meio de algoritmos aplicados em Teoria dos Grafos
-Trabalho de Matemática Discreta (FGV EMAp). Um escape room de 25 salas e 40 portas
-modelado como grafo ponderado: cada sala é um vértice, cada porta uma aresta e o peso
-é o tempo do corredor em minutos. O objetivo é ir de `v1` a `v25` em até 40 minutos.
+Trabalho de Matemática Discreta (FGV EMAp). O objetivo é usar Teoria dos Grafos para
+encontrar rotas de fuga: os lugares viram vértices, as ligações entre eles viram arestas
+e o tempo de travessia vira o peso. Com esse modelo, o trabalho responde três perguntas:
+se dá para sair a tempo, qual é a rota mais rápida (Dijkstra) e quais pontos não podem
+ser bloqueados. Também compara essa rota com a de menos ligações (BFS).
+
+O simulador funciona com qualquer matriz de pesos. Além do caso principal, há um exemplo
+de evacuação de uma cidade hipotética durante uma enchente.
+
+## Caso principal: Fuga do Laboratório
+
+Um escape room de 25 salas e 40 portas. Cada sala é um vértice, cada porta uma aresta e o
+peso é o tempo do corredor em minutos. O objetivo é ir de `v1` a `v25` em até 40 minutos.
 
 | Critério | Algoritmo | Portas | Tempo |
 |---|---|---|---|
