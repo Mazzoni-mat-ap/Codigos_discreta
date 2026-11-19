@@ -144,7 +144,7 @@ obrigatorias = salas_obrigatorias(G, E, S) if rapido else []
 
 # ---------------------------------------------------------------- página
 
-st.title("Fuga do Laboratório")
+st.title("Simulador")
 aba_sim, aba_mat = st.tabs(["Simulação", "Matrizes"])
 
 with aba_sim:
