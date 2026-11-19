@@ -1,0 +1,15 @@
+sala,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,v11,v12,v13,v14
+v1,0,20,25,10,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf
+v2,20,0,inf,inf,inf,inf,15,inf,12,inf,inf,inf,inf,inf
+v3,25,inf,0,inf,inf,inf,inf,inf,inf,15,inf,inf,inf,inf
+v4,10,inf,inf,0,15,25,inf,inf,inf,inf,inf,inf,inf,inf
+v5,inf,inf,inf,15,0,20,inf,inf,inf,inf,inf,inf,inf,inf
+v6,inf,inf,inf,25,20,0,inf,inf,inf,inf,inf,inf,inf,inf
+v7,inf,15,inf,inf,inf,inf,0,15,15,inf,inf,inf,inf,inf
+v8,inf,inf,inf,inf,inf,inf,15,0,inf,inf,25,inf,inf,inf
+v9,inf,12,inf,inf,inf,inf,15,inf,0,inf,12,inf,inf,inf
+v10,inf,inf,15,inf,inf,inf,inf,inf,inf,0,20,inf,60,inf
+v11,inf,inf,inf,inf,inf,inf,inf,25,12,20,0,30,inf,inf
+v12,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,30,0,inf,30
+v13,inf,inf,inf,inf,inf,inf,inf,inf,inf,60,inf,inf,0,30
+v14,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,30,30,0

@@ -31,11 +31,13 @@ CENARIOS = [
     ("Os dois juntos", "dois", SEM_9_11, [17]),
     ("Sala de controle trancada", "controle", mapa.PORTAS, [21]),
 ]
-PREDIO = [
-    ("Prédio sem fogo", []),
-    ("Fogo na cozinha ($v_{14}$)", [14]),
-    ("Fogo e fumaça na escada B ($v_{14}, v_{10}$)", [14, 10]),
-    ("Fogo nas duas escadas ($v_{14}, v_{10}, v_9$)", [14, 10, 9]),
+ENCHENTE = [
+    # (situação, ligações fechadas, locais bloqueados)
+    ("Sem bloqueios", [], []),
+    ("Ponte fechada ($v_4$)", [], [4]),
+    ("Bairro Ribeirinho alagado ($v_2$)", [], [2]),
+    ("Bairro alagado e estrada fechada ($v_2$; $v_{10}$--$v_{11}$)", [(10, 11)], [2]),
+    ("Bairro e Colina bloqueados ($v_2$; $v_{10}$)", [], [2, 10]),
 ]
 
 
@@ -189,14 +191,15 @@ def main():
     escrever("tabela_cenarios.tex", tabela)
     escrever("caminhos_cenarios.tex", lista)
 
-    # Caso real: prédio em chamas (cenário salvo em cenarios.json)
-    c = json.loads((RAIZ / "cenarios.json").read_text(encoding="utf-8"))["Prédio em chamas"]
+    # Aplicação: evacuação em uma enchente (cenário salvo em cenarios.json)
+    c = json.loads((RAIZ / "cenarios.json").read_text(encoding="utf-8"))["Enchente"]
     pos = {int(s): tuple(p) for s, p in c["posicoes"].items()}
     portas = [tuple(p) for p in c["portas"]]
     tabela = [r"\begin{tabular}{lccc}", r"\toprule",
-              r"Situação & Menor tempo & Menos portas & Escapa? \\", r"\midrule"]
-    for i, (nome, bloqueadas) in enumerate(PREDIO):
-        H = criar_grafo(portas, bloqueadas, c["n"])
+              r"Situação & Menor tempo & Menos ligações & Escapa? \\", r"\midrule"]
+    for i, (nome, fechadas, bloqueadas) in enumerate(ENCHENTE):
+        abertas = [p for p in portas if p[:2] not in fechadas]
+        H = criar_grafo(abertas, bloqueadas, c["n"])
         rapido, poucas = dijkstra(H, 1, c["n"]), bfs(H, 1, c["n"])
         if rapido:
             t = tempo_do_caminho(H, rapido)
@@ -207,10 +210,10 @@ def main():
             tabela.append(rf"{nome} & $\infty$ & $\infty$ & não \\")
         if i in (0, 2):
             figura(H, rapido, bloqueadas, salas_obrigatorias(H, 1, c["n"]) if rapido else [],
-                   f"predio_{i}", pos, 1, c["n"])
+                   f"enchente_{i}", pos, 1, c["n"])
     tabela += [r"\bottomrule", r"\end{tabular}"]
-    escrever("tabela_predio.tex", tabela)
-    escrever("nomes_predio.tex", [", ".join(f"$v_{{{s}}}$ {nome}" for s, nome in
+    escrever("tabela_enchente.tex", tabela)
+    escrever("nomes_enchente.tex", [", ".join(f"$v_{{{s}}}$ {nome}" for s, nome in
                                             sorted((int(s), n) for s, n in c["nomes"].items()))])
 
     codigo = GERADO / "codigo"

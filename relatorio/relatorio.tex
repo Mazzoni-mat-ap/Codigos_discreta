@@ -6,7 +6,7 @@
 \usepackage[brazil]{babel}
 \usepackage{lmodern}
 \usepackage{microtype}
-\usepackage[margin=2.5cm]{geometry}
+\usepackage[margin=2cm]{geometry}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{graphicx}
 \usepackage{booktabs}
@@ -37,7 +37,7 @@
 \renewcommand{\algorithmicrequire}{\textbf{Entrada:}}
 \renewcommand{\algorithmicensure}{\textbf{Saída:}}
 
-\newcommand{\repo}{\url{https://github.com/mrcelomn/trabalhomatdis}}
+\newcommand{\repo}{\url{https://github.com/Mazzoni-mat-ap/Codigos_discreta}}
 \newcommand{\dE}{d_{E}}
 
 % ------------------------------------------------------------------ código
@@ -72,7 +72,7 @@
   {\large FGV EMAp --- Escola de Matemática Aplicada\par}
   {\large Matemática Discreta\par}
   \vspace{4cm}
-  {\LARGE\bfseries Fuga do Laboratório\par}
+  {\LARGE\bfseries Caminhos Mínimos com Matemática Discreta\par}
   \vspace{0.4cm}
   {\Large Otimização de rotas de fuga por meio de algoritmos aplicados em Teoria dos Grafos\par}
   \vspace{3cm}
@@ -86,33 +86,29 @@
 \end{titlepage}
 
 \begin{abstract}
-Situações de evacuação, como um incêndio em um prédio ou um alarme em um
-laboratório, têm sempre a mesma estrutura: ambientes ligados por passagens, um
-ponto de partida, uma saída e um tempo limite. A Teoria dos Grafos é a linguagem
-natural para esse tipo de problema, pois transforma a pergunta ``por onde fugir?''
-em perguntas precisas sobre caminhos, distâncias e conexidade, para as quais
+Situações de evacuação, como uma enchente em uma cidade ou um alarme em um
+laboratório, têm sempre a mesma estrutura: salas ligados por passagens, um
+ponto de partida, uma saída e um tempo limite. A Teoria dos Grafos é a forma perfeita de lidar com este problema, pois transforma a pergunta ``por onde fugir?''
+em perguntas sobre caminhos, distâncias e conexidade, tais que
 existem algoritmos cuja correção pode ser demonstrada. O objetivo deste trabalho é
 modelar e demonstrar, a partir da Teoria dos Grafos, formas otimizadas de
 encontrar rotas de fuga em contextos distintos. Escolhemos como escopo um
 \emph{escape room}, a \emph{Fuga do Laboratório}: um ambiente controlado, com
 regras explícitas, em que o problema pode ser enunciado e verificado por
-completo. Resolvido o problema da travessia entre as salas de um escape room, a
+completo. Resolvido o problema da travessia entre as salas de um \textit{escape room}, a
 mesma lógica de resolução se aplica a contextos reais, como a evacuação de
-prédios em incêndio. A metodologia consiste em modelar o ambiente como um grafo
+regiões atingidas por enchentes. A metodologia consiste em modelar o ambiente como um grafo
 com pesos, em que salas são vértices, portas são arestas e os pesos são os tempos
 de travessia; reunir e demonstrar as definições e propriedades necessárias;
 contrapor dois critérios de otimização de rotas, o menor número de portas, obtido
 pela busca em largura, e o menor tempo, obtido pelo Algoritmo de Dijkstra; e
 caracterizar as salas cuja obstrução impede a fuga. Todos os algoritmos foram
 implementados em Python e reunidos em um simulador interativo, no qual também
-aplicamos o modelo à evacuação de um prédio em chamas. O relatório apresenta as
+aplicamos o modelo a um cenário de enchente. O relatório apresenta as
 definições e propriedades utilizadas, os algoritmos com suas demonstrações de
 correção, os exemplos simulados e, na conclusão, os resultados obtidos. O código
 e o simulador estão disponíveis em \repo.
 \end{abstract}
-
-\tableofcontents
-\newpage
 
 % ==================================================================
 \section{Introdução}
@@ -129,7 +125,7 @@ formas otimizadas de encontrar rotas de fuga. Escolhemos um escape room porque e
 reúne, em escala controlada, todos os elementos de uma evacuação real (salas,
 passagens, tempo limite e obstáculos) e permite verificar cada resposta. Uma vez
 resolvido o problema da travessia entre as salas, a mesma lógica se aplica a
-outros contextos, como mostramos ao final com a evacuação de um prédio em chamas.
+outros contextos, como mostramos ao final com um cenário de enchente.
 
 \paragraph{A história.} Durante uma visita ao laboratório da professora, um
 experimento dá errado: o alarme toca, as portas se trancam e, em 40 minutos, o
@@ -173,8 +169,8 @@ utilizadas, separando as definições gerais da Teoria dos Grafos das definiçõ
 próprias deste trabalho, junto com as propriedades que delas decorrem. A
 Seção~\ref{sec:resultados} apresenta a busca em largura e o Algoritmo de Dijkstra,
 demonstra a correção de cada um e os contrapõe no grafo do escape room. A
-Seção~\ref{sec:exemplos} traz os cenários simulados, incluindo a evacuação de um
-prédio em chamas, e a Seção~\ref{sec:conclusao} resume os resultados.
+Seção~\ref{sec:exemplos} traz os cenários simulados, incluindo um cenário de
+enchente, e a Seção~\ref{sec:conclusao} resume os resultados.
 
 % ==================================================================
 \section{Definições básicas e propriedades}\label{sec:definicoes}
@@ -654,41 +650,43 @@ criar novos pontos críticos. Já trancar $v_{21}$ é o caso do
 Corolário~\ref{cor:bloqueio}: nenhuma mudança de tempo resolve, porque não existe
 rota de fuga.
 
-\subsection{Um caso real: evacuação de um prédio em chamas}
+\subsection{Aplicação: evacuação em uma enchente}
 
-A mesma modelagem se aplica a um prédio de escritórios de dois andares com duas
-escadas, em que as pessoas precisam sair de uma sala de reunião no 2º andar e
-chegar ao ponto de encontro do lado de fora. Os vértices são:
-\input{gerado/nomes_predio.tex}. Os pesos estão em minutos, o tempo limite é de 5
-minutos, e a matriz de pesos (Definição~\ref{def:matrizpesos}) está no arquivo
-\texttt{exemplos/predio\_em\_chamas.csv} do repositório, de onde foi importada
-diretamente no simulador.
+A mesma modelagem se aplica à evacuação de uma cidade hipotética durante uma
+enchente, em que as pessoas precisam sair do Centro e chegar a um abrigo em área
+segura. Agora, os vértices são bairros e pontos de passagem, e as arestas são as
+ligações entre eles: \input{gerado/nomes_enchente.tex}. A entrada é $v_1$, a saída é
+$v_{14}$ e o tempo limite é de 120 minutos. Os pesos são tempos hipotéticos, em
+minutos, escolhidos para ilustrar o método.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figuras/predio_0.pdf}
-  \caption{O prédio sem fogo: a rota de menor tempo (azul) desce pela escada A e
-  sai pela saída de emergência.}
+  \includegraphics[width=0.75\textwidth]{figuras/enchente_0.pdf}
+  \caption{Sem bloqueios: a rota de menor tempo (azul) passa pelo Bairro Ribeirinho,
+  pela Avenida Norte, pelo Entroncamento e pela Estrada Alta.}
 \end{figure}
 
 \begin{table}[H]
   \centering
-  \caption{Evacuação do prédio: tempo em minutos (número de portas).}
-  \label{tab:predio}
-  \input{gerado/tabela_predio.tex}
+  \caption{Evacuação na enchente: tempo em minutos (número de ligações).}
+  \label{tab:enchente}
+  \input{gerado/tabela_enchente.tex}
 \end{table}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figuras/predio_2.pdf}
-  \caption{Fogo na cozinha e fumaça na escada B: a única rota restante não cabe no
-  limite de tempo.}
+  \includegraphics[width=0.75\textwidth]{figuras/enchente_2.pdf}
+  \caption{Bairro Ribeirinho alagado: a rota passa pelo Bairro Leste e pela Colina,
+  que se tornam obrigatórios.}
 \end{figure}
 
-Os mesmos fenômenos do escape room reaparecem: a rota com menos portas é mais
-lenta que a de menor tempo; o fogo na cozinha torna a recepção e a saída principal
-salas obrigatórias; e, com as duas escadas tomadas, o 2º andar fica em uma
-componente conexa diferente da saída.
+Os mesmos fenômenos do escape room reaparecem: a rota com menos ligações
+(130 minutos) é mais lenta que a de menor tempo (104 minutos) e não cabe no limite.
+Fechar a ponte não altera a melhor rota, porque ela leva para o lado oposto ao
+abrigo. Já o alagamento do Bairro Ribeirinho leva o tempo exatamente ao limite de
+120 minutos e torna o Bairro Leste e a Colina obrigatórios. Se a estrada entre a
+Colina e o Entroncamento também for fechada, a fuga leva 130 minutos; e, se a Colina
+for bloqueada, não resta nenhuma rota.
 
 \subsection{Implementação e simulador}
 
@@ -699,7 +697,7 @@ para cada vértice $v$, guardamos $N(v)$ e os pesos das arestas. O simulador,
 feito com Streamlit, mostra o grafo com as rotas do Dijkstra e da busca em
 largura; clicando em um vértice, a sala é bloqueada e tudo é recalculado. Também é
 possível alterar pesos, fechar portas, trocar a entrada e a saída e importar uma
-matriz de pesos qualquer, como fizemos com o prédio em chamas.
+matriz de pesos qualquer, como a do cenário de enchente.
 
 % ==================================================================
 \section{Conclusão}\label{sec:conclusao}
@@ -718,10 +716,10 @@ são exatamente as que separam a entrada da saída, e bloquear qualquer uma dela
 torna a distância infinita. As simulações mostram ainda que a folga é pequena: um
 imprevisto consome os 2 minutos de margem e dois imprevistos impedem a fuga.
 
-Por fim, a mesma lógica se aplicou à evacuação de um prédio em chamas: sem fogo,
-a saída leva 4,4 minutos; com fogo na cozinha, 4,7 minutos; com fogo e fumaça em
-uma das escadas, 5,4 minutos, acima do limite; e, com as duas escadas tomadas, não
-existe rota. Isso confirma a ideia central do trabalho: resolvido o problema da
+Por fim, a mesma lógica se aplicou a um cenário de enchente: sem bloqueios, a saída
+do Centro até o abrigo leva 104 minutos; com o Bairro Ribeirinho alagado, 120 minutos,
+exatamente no limite; com a estrada da Colina também fechada, 130 minutos, acima do
+limite; e, com a Colina bloqueada, não existe rota. Isso confirma a ideia central do trabalho: resolvido o problema da
 travessia em um escape room, o mesmo modelo e os mesmos algoritmos servem para
 planejar rotas de fuga em contextos reais.
 
@@ -751,12 +749,5 @@ planejar rotas de fuga em contextos reais.
   \caption{Matriz de pesos $W$, em minutos (Definição~\ref{def:matrizpesos}).}
   \resizebox{\textwidth}{!}{\input{gerado/matriz_pesos.tex}}
 \end{table}
-
-\section{Código dos algoritmos}
-
-O código completo e as instruções para rodar o simulador estão em \repo.
-Reproduzimos aqui o arquivo com os algoritmos.
-
-\lstinputlisting{gerado/codigo/algoritmos.py}
 
 \end{document}

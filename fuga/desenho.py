@@ -1,4 +1,4 @@
-# Desenho do mapa em SVG: uma linha para cada porta e um círculo para cada sala.
+"""Desenho do mapa em SVG: uma linha para cada porta e um círculo para cada sala."""
 
 import math
 

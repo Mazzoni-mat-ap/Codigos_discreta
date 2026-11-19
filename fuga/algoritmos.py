@@ -1,4 +1,4 @@
-# Algoritmos do trabalho, implementados sem bibliotecas de grafos
+"""Algoritmos do trabalho, implementados sem bibliotecas de grafos."""
 
 from collections import deque
 

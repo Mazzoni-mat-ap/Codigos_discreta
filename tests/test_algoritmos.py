@@ -75,14 +75,21 @@ class TestImportacao(unittest.TestCase):
             with self.assertRaises(ValueError):
                 ler_matriz(texto)
 
-    def test_predio_em_chamas(self):
-        texto = Path("exemplos/predio_em_chamas.csv").read_text(encoding="utf-8")
+    def test_enchente(self):
+        texto = Path("exemplos/enchente.csv").read_text(encoding="utf-8")
         n, portas = ler_matriz(texto)
-        casos = [([], 4.4), ([14], 4.7), ([14, 10], 5.4), ([14, 10, 9], None)]
-        for bloqueadas, esperado in casos:
-            G = criar_grafo(portas, bloqueadas, n)
-            caminho = dijkstra(G, 1, 18)
-            tempo = round(tempo_do_caminho(G, caminho), 2) if caminho else None
+        casos = [
+            ([], [], 104),
+            ([], [4], 104),
+            ([], [2], 120),
+            ([(10, 11)], [2], 130),
+            ([], [2, 10], None),
+        ]
+        for fechadas, bloqueadas, esperado in casos:
+            abertas = [p for p in portas if p[:2] not in fechadas]
+            G = criar_grafo(abertas, bloqueadas, n)
+            caminho = dijkstra(G, 1, 14)
+            tempo = tempo_do_caminho(G, caminho) if caminho else None
             self.assertEqual(tempo, esperado)
 
 

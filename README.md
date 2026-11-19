@@ -25,7 +25,7 @@ No simulador, clique numa sala do mapa para bloquear ou liberar. Na barra latera
 para trocar a entrada e a saída, mudar o tempo limite e o tempo de cada corredor, e fechar
 portas. Na aba Matrizes dá para importar uma matriz de pesos (colando ou por arquivo CSV)
 como um cenário novo; os cenários ficam em `cenarios.json`. O exemplo
-`exemplos/predio_em_chamas.csv` é a evacuação de um prédio em chamas.
+`exemplos/enchente.csv` é a evacuação de uma cidade hipotética durante uma enchente.
 
 ## Estrutura
 
