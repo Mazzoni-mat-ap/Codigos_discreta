@@ -11,7 +11,7 @@ from fuga.algoritmos import bfs, dijkstra, salas_obrigatorias, tempo_do_caminho
 from fuga.desenho import AZUL, JS, LARANJA, ROXO, VERDE, VERMELHO, desenhar
 from fuga.grafo import INF, criar_grafo, ler_matriz, matriz_adjacencia, matriz_pesos
 
-st.set_page_config(page_title="Fuga do Laboratório", layout="wide")
+st.set_page_config(page_title="Simulador", layout="wide")
 
 # Componente que mostra o SVG do mapa e devolve a sala clicada.
 mapa_clicavel = st.components.v2.component("mapa_clicavel", js=JS)
