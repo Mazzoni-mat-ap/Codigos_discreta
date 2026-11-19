@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass{article}
 
 % ------------------------------------------------------------------ pacotes
 \usepackage[utf8]{inputenc}
@@ -38,7 +38,7 @@
 \renewcommand{\algorithmicensure}{\textbf{Saída:}}
 
 \newcommand{\repo}{\url{https://github.com/Mazzoni-mat-ap/Codigos_discreta}}
-\newcommand{\dE}{d_{E}}
+\newcommand{\dE}{d_E}
 
 % ------------------------------------------------------------------ código
 \definecolor{fundo}{HTML}{F6F8FA}
@@ -46,43 +46,43 @@
 \definecolor{palavra}{HTML}{1D4ED8}
 \definecolor{texto}{HTML}{0F766E}
 \lstset{
-  language=Python,
-  basicstyle=\ttfamily\footnotesize,
-  keywordstyle=\color{palavra}\bfseries,
-  commentstyle=\color{comentario}\itshape,
-  stringstyle=\color{texto},
-  backgroundcolor=\color{fundo},
-  numbers=left, numberstyle=\tiny\color{comentario}, numbersep=6pt,
-  frame=single, rulecolor=\color{black!15},
-  breaklines=true, showstringspaces=false, tabsize=4,
-  columns=fullflexible, keepspaces=true,
-  extendedchars=true,
-  literate=
-    {á}{{\'a}}1 {â}{{\^a}}1 {ã}{{\~a}}1 {à}{{\`a}}1
-    {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1
-    {ó}{{\'o}}1 {ô}{{\^o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1
-    {ç}{{\c{c}}}1 {Ú}{{\'U}}1 {É}{{\'E}}1 {Ã}{{\~A}}1
+    language=Python,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{palavra}\bfseries,
+    commentstyle=\color{comentario}\itshape,
+    stringstyle=\color{texto},
+    backgroundcolor=\color{fundo},
+    numbers=left, numberstyle=\tiny\color{comentario}, numbersep=6pt,
+    frame=single, rulecolor=\color{black!15},
+    breaklines=true, showstringspaces=false, tabsize=4,
+    columns=fullflexible, keepspaces=true,
+    extendedchars=true,
+    literate=
+        {á}{{\'a}}1 {â}{{\^a}}1 {ã}{{\~a}}1 {à}{{\`a}}1
+        {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1
+        {ó}{{\'o}}1 {ô}{{\^o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1
+        {ç}{{\c{c}}}1 {Ú}{{\'U}}1 {É}{{\'E}}1 {Ã}{{\~A}}1
 }
 
 % ------------------------------------------------------------------ documento
 \begin{document}
 
 \begin{titlepage}
-  \centering
-  {\large FGV EMAp --- Escola de Matemática Aplicada\par}
-  {\large Matemática Discreta\par}
-  \vspace{4cm}
-  {\LARGE\bfseries Caminhos Mínimos com Matemática Discreta\par}
-  \vspace{0.4cm}
-  {\Large Otimização de rotas de fuga por meio de algoritmos aplicados em Teoria dos Grafos\par}
-  \vspace{3cm}
-  {\large
-    Frederico Taveira Martins de Souza\\[2pt]
-    Ian Luca Marinho Aguiar\\[2pt]
-    João Vitor Neves Mazzoni\\[2pt]
-    Marcelo Maiato Neves\par}
-  \vfill
-  {\large Rio de Janeiro, novembro de 2026\par}
+    \centering
+    {\large FGV EMAp --- Escola de Matemática Aplicada\par}
+    {\large Matemática Discreta\par}
+    \vspace{4cm}
+    {\LARGE\bfseries Caminhos Mínimos com Matemática Discreta\par}
+    \vspace{0.4cm}
+    {\Large Otimização de rotas de fuga por meio de algoritmos aplicados em Teoria dos Grafos\par}
+    \vspace{3cm}
+    {\large
+        Frederico Taveira Martins de Souza\\[2pt]
+        Ian Luca Marinho Aguiar\\[2pt]
+        João Vitor Neves Mazzoni\\[2pt]
+        Marcelo Maiato Neves\par}
+    \vfill
+    {\large Rio de Janeiro, novembro de 2026\par}
 \end{titlepage}
 
 \begin{abstract}
@@ -150,20 +150,20 @@ formalmente na Definição~\ref{def:escape}, e o desafio passa a ser:
 menor ou igual a 40?} (Definições~\ref{def:distancia} e~\ref{def:fuga}).
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{figuras/mapa.pdf}
-  \caption{O grafo do escape room. Verde: entrada ($v_1$) e saída ($v_{25}$);
-  laranja: as cinco salas obrigatórias da história. O número em cada aresta é o
-  seu peso, em minutos.}
-  \label{fig:mapa}
+    \centering
+    \includegraphics[width=\textwidth]{figuras/mapa.pdf}
+    \caption{O grafo do escape room. Verde: entrada ($v_1$) e saída ($v_{25}$);
+    laranja: as cinco salas obrigatórias da história. O número em cada aresta é o
+    seu peso, em minutos.}
+    \label{fig:mapa}
 \end{figure}
 
 \begin{table}[H]
-  \centering
-  \caption{Nome de cada sala.}
-  \label{tab:nomes}
-  \small
-  \input{gerado/nomes_salas.tex}
+    \centering
+    \caption{Nome de cada sala.}
+    \label{tab:nomes}
+    \small
+    \input{gerado/nomes_salas.tex}
 \end{table}
 
 \paragraph{Organização.} A Seção~\ref{sec:definicoes} reúne todas as definições
@@ -364,6 +364,7 @@ qualquer tempo limite $T$.
 Pela Definição~\ref{def:obrigatoria}, não existe caminho de $s$ a $t$ em
 $G \setminus \{v\}$; pela Definição~\ref{def:distancia}, $d(s,t) = +\infty > T$.
 \end{proof}
+
 \section{Resultados principais}\label{sec:resultados}
 
 Nesta seção apresentamos os dois algoritmos que contrapomos para encontrar rotas
@@ -385,11 +386,13 @@ conexo; aqui usamos os níveis dessa construção para medir distâncias em ares
 \Ensure caminho de $a$ até $z$ com o menor número de arestas
 \State marque $a$ como visitado; $\mathrm{nivel}(a) \gets 0$; $F \gets (a)$ \Comment{fila}
 \While{$F$ não está vazia}
-  \State retire o primeiro vértice $u$ de $F$
-  \If{$u = z$} \Return o caminho de $a$ até $z$ refeito pelos pais \EndIf
-  \For{cada $v \in N(u)$ ainda não visitado}
-    \State marque $v$; $\mathrm{pai}(v) \gets u$; $\mathrm{nivel}(v) \gets \mathrm{nivel}(u)+1$; coloque $v$ no fim de $F$
-  \EndFor
+    \State retire o primeiro vértice $u$ de $F$
+    \If{$u = z$}
+        \Return o caminho de $a$ até $z$ refeito pelos pais
+    \EndIf
+    \For{cada $v \in N(u)$ ainda não visitado}
+        \State marque $v$; $\mathrm{pai}(v) \gets u$; $\mathrm{nivel}(v) \gets \mathrm{nivel}(u)+1$; coloque $v$ no fim de $F$
+    \EndFor
 \EndWhile
 \State \Return ``não existe caminho''
 \end{algorithmic}
@@ -451,15 +454,16 @@ denota o conjunto dos vértices ainda não visitados.
 \Ensure $L(z) = d(a,z)$ e um caminho de $a$ até $z$ com comprimento com pesos $L(z)$
 \State $L(a) \gets 0$; $L(x) \gets +\infty$ para todo $x \ne a$; $T \gets V$
 \While{$T \ne \emptyset$}
-  \State escolha $v \in T$ com $L(v)$ mínimo
-  \If{$L(v) = +\infty$} \textbf{pare} \Comment{os vértices restantes são inalcançáveis}
-  \EndIf
-  \State $T \gets T \setminus \{v\}$
-  \For{cada $x \in N(v) \cap T$}
-    \If{$L(v) + w(v,x) < L(x)$}
-      \State $L(x) \gets L(v) + w(v,x)$; $\mathrm{pai}(x) \gets v$
+    \State escolha $v \in T$ com $L(v)$ mínimo
+    \If{$L(v) = +\infty$}
+        \State \textbf{pare} \Comment{os vértices restantes são inalcançáveis}
     \EndIf
-  \EndFor
+    \State $T \gets T \setminus \{v\}$
+    \For{cada $x \in N(v) \cap T$}
+        \If{$L(v) + w(v,x) < L(x)$}
+            \State $L(x) \gets L(v) + w(v,x)$; $\mathrm{pai}(x) \gets v$
+        \EndIf
+    \EndFor
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
@@ -488,8 +492,8 @@ comprimento com pesos pelo menos $L(x)$, e quando $x$ saiu de $T$ o rótulo de $
 passou a ser no máximo $L(x) + w(x,u)$. Como os pesos são positivos e $u$ é
 escolhido entre os de $T$,
 \[
-  w(P) \ <\ L(v) \ \le\ L(u) \ \le\ L(x) + w(x,u) \ \le\ w(\text{trecho de $P$ até $u$})
-  \ \le\ w(P),
+    w(P) < L(v) \le L(u) \le L(x) + w(x,u) \le
+    w(\text{trecho de } P \text{ até } u) \le w(P),
 \]
 o que é uma contradição. Logo $L(v) = d(a,v)$.
 \end{proof}
@@ -526,8 +530,8 @@ $a = s = v_1$ e $z = t = v_{25}$.
 \paragraph{Menor tempo.} Pelo Teorema~\ref{teo:dijkstra}, o Algoritmo de Dijkstra
 fornece $d(v_1, v_{25}) = 38$, com a rota
 \[
-  v_1 \to v_2 \to v_4 \to v_8 \to v_9 \to v_{11} \to v_{12} \to v_{13} \to v_{15}
-  \to v_{17} \to v_{20} \to v_{21} \to v_{23} \to v_{25},
+    v_1 \to v_2 \to v_4 \to v_8 \to v_9 \to v_{11} \to v_{12} \to v_{13} \to v_{15}
+    \to v_{17} \to v_{20} \to v_{21} \to v_{23} \to v_{25},
 \]
 de 13 portas. Como $38 \le 40$, pela Definição~\ref{def:fuga} a fuga é possível,
 com folga de apenas 2 minutos.
@@ -550,11 +554,11 @@ Teorema~\ref{teo:potencias}, não existe caminho de $v_1$ a $v_{25}$ com menos d
 \end{proof}
 
 \begin{table}[H]
-  \centering
-  \caption{As \qtdcaminhos{} rotas de fuga com \kmin{} portas e o tempo de cada uma.}
-  \label{tab:onze}
-  \small
-  \input{gerado/caminhos_11.tex}
+    \centering
+    \caption{As \qtdcaminhos{} rotas de fuga com \kmin{} portas e o tempo de cada uma.}
+    \label{tab:onze}
+    \small
+    \input{gerado/caminhos_11.tex}
 \end{table}
 
 \begin{corolario}\label{cor:contar}
@@ -580,6 +584,7 @@ diferentes. No grafo do escape room, as salas obrigatórias são exatamente $v_4
 $v_8$, $v_{12}$, $v_{15}$ e $v_{21}$, as cinco salas da história. Pela
 Proposição~\ref{prop:obrigatoria}, toda rota de fuga passa por elas, e pelo
 Corolário~\ref{cor:bloqueio}, bloquear qualquer uma delas impede a fuga.
+
 \section{Exemplos}\label{sec:exemplos}
 
 \subsection{As duas rotas no mapa original}
@@ -590,17 +595,17 @@ $v_9, v_{11}$ contra 8 min por $v_{10}$) e entre $v_{15}$ e $v_{21}$ (10 min por
 $v_{17}, v_{20}$ contra 13 min por $v_{18}$).
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{figuras/caminho_rapido.pdf}
-  \caption{Rota de menor tempo (Dijkstra): 13 portas, 38 minutos.}
-  \label{fig:rapido}
+    \centering
+    \includegraphics[width=\textwidth]{figuras/caminho_rapido.pdf}
+    \caption{Rota de menor tempo (Dijkstra): 13 portas, 38 minutos.}
+    \label{fig:rapido}
 \end{figure}
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{figuras/caminho_portas.pdf}
-  \caption{Rota com menos portas (busca em largura): 11 portas, 43 minutos.}
-  \label{fig:portas}
+    \centering
+    \includegraphics[width=\textwidth]{figuras/caminho_portas.pdf}
+    \caption{Rota com menos portas (busca em largura): 11 portas, 43 minutos.}
+    \label{fig:portas}
 \end{figure}
 
 \subsection{Imprevistos no laboratório}
@@ -612,10 +617,10 @@ o tempo e, entre parênteses, o número de portas da rota encontrada por cada
 algoritmo.
 
 \begin{table}[H]
-  \centering
-  \caption{Resultados por cenário: tempo em minutos (número de portas).}
-  \label{tab:cenarios}
-  \input{gerado/tabela_cenarios.tex}
+    \centering
+    \caption{Resultados por cenário: tempo em minutos (número de portas).}
+    \label{tab:cenarios}
+    \input{gerado/tabela_cenarios.tex}
 \end{table}
 
 As rotas de menor tempo de cada cenário são:
@@ -623,21 +628,21 @@ As rotas de menor tempo de cada cenário são:
 \input{gerado/caminhos_cenarios.tex}
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{figuras/cenario_fumaca.pdf}\\[2pt]
-  {\small (a) Fumaça na $v_{17}$: 40 minutos.}\\[8pt]
-  \includegraphics[width=\textwidth]{figuras/cenario_alagado.pdf}\\[2pt]
-  {\small (b) Corredor $v_9$--$v_{11}$ alagado: 40 minutos. A sala $v_{10}$ passa a ser obrigatória.}
-  \caption{Um imprevisto: a fuga ainda é possível, mas no limite.}
+    \centering
+    \includegraphics[width=\textwidth]{figuras/cenario_fumaca.pdf}\\[2pt]
+    {\small (a) Fumaça na $v_{17}$: 40 minutos.}\\[8pt]
+    \includegraphics[width=\textwidth]{figuras/cenario_alagado.pdf}\\[2pt]
+    {\small (b) Corredor $v_9$--$v_{11}$ alagado: 40 minutos. A sala $v_{10}$ passa a ser obrigatória.}
+    \caption{Um imprevisto: a fuga ainda é possível, mas no limite.}
 \end{figure}
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{figuras/cenario_dois.pdf}\\[2pt]
-  {\small (a) Os dois imprevistos juntos: 42 minutos.}\\[8pt]
-  \includegraphics[width=\textwidth]{figuras/cenario_controle.pdf}\\[2pt]
-  {\small (b) Sala de controle $v_{21}$ trancada: não há rota de fuga.}
-  \caption{Situações em que a fuga é impossível.}
+    \centering
+    \includegraphics[width=\textwidth]{figuras/cenario_dois.pdf}\\[2pt]
+    {\small (a) Os dois imprevistos juntos: 42 minutos.}\\[8pt]
+    \includegraphics[width=\textwidth]{figuras/cenario_controle.pdf}\\[2pt]
+    {\small (b) Sala de controle $v_{21}$ trancada: não há rota de fuga.}
+    \caption{Situações em que a fuga é impossível.}
 \end{figure}
 
 Cada imprevisto sozinho custa exatamente 2 minutos e consome toda a folga, e os
@@ -657,24 +662,24 @@ $v_{14}$ e o tempo limite é de 120 minutos. Os pesos são tempos hipotéticos, 
 minutos, escolhidos para ilustrar o método.
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.75\textwidth]{figuras/enchente_0.pdf}
-  \caption{Sem bloqueios: a rota de menor tempo (azul) passa pelo Bairro Ribeirinho,
-  pela Avenida Norte, pelo Entroncamento e pela Estrada Alta.}
+    \centering
+    \includegraphics[width=0.75\textwidth]{figuras/enchente_0.pdf}
+    \caption{Sem bloqueios: a rota de menor tempo (azul) passa pelo Bairro Ribeirinho,
+    pela Avenida Norte, pelo Entroncamento e pela Estrada Alta.}
 \end{figure}
 
 \begin{table}[H]
-  \centering
-  \caption{Evacuação na enchente: tempo em minutos (número de ligações).}
-  \label{tab:enchente}
-  \input{gerado/tabela_enchente.tex}
+    \centering
+    \caption{Evacuação na enchente: tempo em minutos (número de ligações).}
+    \label{tab:enchente}
+    \input{gerado/tabela_enchente.tex}
 \end{table}
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.75\textwidth]{figuras/enchente_2.pdf}
-  \caption{Bairro Ribeirinho alagado: a rota passa pelo Bairro Leste e pela Colina,
-  que se tornam obrigatórios.}
+    \centering
+    \includegraphics[width=0.75\textwidth]{figuras/enchente_2.pdf}
+    \caption{Bairro Ribeirinho alagado: a rota passa pelo Bairro Leste e pela Colina,
+    que se tornam obrigatórios.}
 \end{figure}
 
 Os mesmos fenômenos do escape room reaparecem: a rota com menos ligações
@@ -695,7 +700,6 @@ feito com Streamlit, mostra o grafo com as rotas do Dijkstra e da busca em
 largura; clicando em um vértice, a sala é bloqueada e tudo é recalculado. Também é
 possível alterar pesos, fechar portas, trocar a entrada e a saída e importar uma
 matriz de pesos qualquer, como a do cenário de enchente.
-
 
 \section{Conclusão}\label{sec:conclusao}
 
@@ -726,21 +730,21 @@ planejar rotas de fuga em contextos reais.
 \bibitem{rangel} S. Rangel. \emph{Teoria dos Grafos}. UNESP.
 \bibitem{wilson} R. J. Wilson. \emph{Introduction to Graph Theory}. Pearson.
 \bibitem{dijkstra} E. W. Dijkstra. A note on two problems in connexion with
-  graphs. \emph{Numerische Mathematik}, 1:269--271, 1959.
+    graphs. \emph{Numerische Mathematik}, 1:269--271, 1959.
 \end{thebibliography}
-
-\section{Material de Apoio: Matrizes do grafo do \textit{escape room}\label{ap:matrizes}
+\section{Material de Apoio: Matrizes do grafo do \textit{escape room}}
+\label{ap:matrizes}
 
 \begin{table}[H]
-  \centering
-  \caption{Matriz de adjacência $A$ (Definição~\ref{def:adjacencia}).}
-  \resizebox{\textwidth}{!}{\input{gerado/matriz_adjacencia.tex}}
+    \centering
+    \caption{Matriz de adjacência $A$ (Definição~\ref{def:adjacencia}).}
+    \resizebox{\textwidth}{!}{\input{gerado/matriz_adjacencia.tex}}
 \end{table}
 
 \begin{table}[H]
-  \centering
-  \caption{Matriz de pesos $W$, em minutos (Definição~\ref{def:matrizpesos}).}
-  \resizebox{\textwidth}{!}{\input{gerado/matriz_pesos.tex}}
+    \centering
+    \caption{Matriz de pesos $W$, em minutos (Definição~\ref{def:matrizpesos}).}
+    \resizebox{\textwidth}{!}{\input{gerado/matriz_pesos.tex}}
 \end{table}
 
 \end{document}
