@@ -1,4 +1,4 @@
-# Fuga do Laboratório
+# Fuga do Laboratório - Caminhos Mínimos com Matemática Discreta
 
 Trabalho de Matemática Discreta (FGV EMAp). Um escape room de 25 salas e 40 portas
 modelado como grafo ponderado: cada sala é um vértice, cada porta uma aresta e o peso
