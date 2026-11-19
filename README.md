@@ -1,5 +1,5 @@
-# Fuga do Laboratório - Caminhos Mínimos com Matemática Discreta
-
+# Caminhos Mínimos com Matemática Discreta
+## Otimização de rotas de fuga por meio de algoritmos aplicados em Teoria dos Grafos
 Trabalho de Matemática Discreta (FGV EMAp). Um escape room de 25 salas e 40 portas
 modelado como grafo ponderado: cada sala é um vértice, cada porta uma aresta e o peso
 é o tempo do corredor em minutos. O objetivo é ir de `v1` a `v25` em até 40 minutos.
