@@ -113,7 +113,6 @@ e o simulador estão disponíveis em \repo.
 \tableofcontents
 \newpage
 
-% ==================================================================
 \section{Introdução}
 
 Planejar uma rota de fuga é decidir, entre muitas sequências possíveis de
@@ -175,7 +174,6 @@ demonstra a correção de cada um e os contrapõe no grafo do escape room. A
 Seção~\ref{sec:exemplos} traz os cenários simulados, incluindo um cenário de
 enchente, e a Seção~\ref{sec:conclusao} resume os resultados.
 
-% ==================================================================
 \section{Definições básicas e propriedades}\label{sec:definicoes}
 
 Os algoritmos usados neste trabalho só garantem rotas ótimas porque se apoiam em
@@ -366,8 +364,6 @@ qualquer tempo limite $T$.
 Pela Definição~\ref{def:obrigatoria}, não existe caminho de $s$ a $t$ em
 $G \setminus \{v\}$; pela Definição~\ref{def:distancia}, $d(s,t) = +\infty > T$.
 \end{proof}
-
-% ==================================================================
 \section{Resultados principais}\label{sec:resultados}
 
 Nesta seção apresentamos os dois algoritmos que contrapomos para encontrar rotas
@@ -584,8 +580,6 @@ diferentes. No grafo do escape room, as salas obrigatórias são exatamente $v_4
 $v_8$, $v_{12}$, $v_{15}$ e $v_{21}$, as cinco salas da história. Pela
 Proposição~\ref{prop:obrigatoria}, toda rota de fuga passa por elas, e pelo
 Corolário~\ref{cor:bloqueio}, bloquear qualquer uma delas impede a fuga.
-
-% ==================================================================
 \section{Exemplos}\label{sec:exemplos}
 
 \subsection{As duas rotas no mapa original}
@@ -702,7 +696,7 @@ largura; clicando em um vértice, a sala é bloqueada e tudo é recalculado. Tam
 possível alterar pesos, fechar portas, trocar a entrada e a saída e importar uma
 matriz de pesos qualquer, como a do cenário de enchente.
 
-% ==================================================================
+
 \section{Conclusão}\label{sec:conclusao}
 
 Modelar o escape room como um grafo com pesos transformou o desafio da fuga em um
@@ -726,20 +720,16 @@ limite; e, com a Colina bloqueada, não existe rota. Isso confirma a ideia centr
 travessia em um escape room, o mesmo modelo e os mesmos algoritmos servem para
 planejar rotas de fuga em contextos reais.
 
-% ==================================================================
-\begin{thebibliography}{9}
+\begin{bibliografia}{9}
 \bibitem{notas} Notas de aula de Matemática Discreta, FGV EMAp, 2026.
 \bibitem{johnsonbaugh} R. Johnsonbaugh. \emph{Discrete Mathematics}. Pearson.
 \bibitem{rangel} S. Rangel. \emph{Teoria dos Grafos}. UNESP.
 \bibitem{wilson} R. J. Wilson. \emph{Introduction to Graph Theory}. Pearson.
 \bibitem{dijkstra} E. W. Dijkstra. A note on two problems in connexion with
   graphs. \emph{Numerische Mathematik}, 1:269--271, 1959.
-\end{thebibliography}
+\end{bibliografia}
 
-% ==================================================================
-\appendix
-
-\section{Matrizes do grafo do escape room}\label{ap:matrizes}
+\section{Material de Apoio: Matrizes do grafo do \textit{escape room}\label{ap:matrizes}
 
 \begin{table}[H]
   \centering
